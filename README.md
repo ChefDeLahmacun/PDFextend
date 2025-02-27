@@ -1,36 +1,84 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# PDF Note Space Extender
+
+A web application that allows users to extend PDF files by adding white space to the right side for note-taking purposes.
+
+## Features
+
+- PDF file upload with drag-and-drop support
+- PDF preview with page navigation
+- Adjustable note space width (100-500px)
+- Server-side PDF processing
+- Download modified PDFs with extended space
+- Responsive design
+- Modern UI with Tailwind CSS
+
+## Tech Stack
+
+- Next.js 14 with App Router
+- TypeScript
+- Tailwind CSS
+- PDF-Lib for PDF manipulation
+- React-PDF for PDF preview
+- React-Dropzone for file upload
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
+- Node.js 18+ and npm
+
+### Installation
+
+1. Clone the repository:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone <repository-url>
+cd PDFextend
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies:
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Run the development server:
+```bash
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## Learn More
+## Usage
 
-To learn more about Next.js, take a look at the following resources:
+1. Upload a PDF file by dragging and dropping it into the upload area or clicking to select a file
+2. Use the slider or input field to adjust the width of the note-taking space
+3. Preview the PDF with the extended space
+4. Click "Download Extended PDF" to get the modified version
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Development
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Project Structure
 
-## Deploy on Vercel
+```
+src/
+├── app/
+│   ├── api/
+│   │   └── extend-pdf/
+│   │       └── route.ts    # PDF processing API endpoint
+│   └── page.tsx            # Main application page
+├── components/
+│   ├── PDFUpload.tsx       # File upload component
+│   ├── PDFViewer.tsx       # PDF preview component
+│   ├── NoteSpaceControl.tsx # Width control component
+│   └── DownloadButton.tsx  # PDF download component
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### API Endpoint
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The `/api/extend-pdf` endpoint handles PDF processing:
+- Accepts PDF file and note space width via FormData
+- Uses PDF-Lib to modify the PDF
+- Returns the modified PDF for download
+
+## License
+
+MIT License
