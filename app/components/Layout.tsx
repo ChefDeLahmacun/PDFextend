@@ -13,7 +13,7 @@ const Layout = ({ children, feedbackSectionNeedsExtraHeight }: LayoutProps) => {
   const headerHeight = '100px';
   const featuresHeight = '280px';
   const minGreenSectionHeight = '950px'; // Minimum height
-  const feedbackHeight = feedbackSectionNeedsExtraHeight ? '550px' : '450px';
+  const feedbackHeight = feedbackSectionNeedsExtraHeight ? '500px' : '400px';
   const sideBoxWidth = '180px';
   
   // Start with a reasonable default height

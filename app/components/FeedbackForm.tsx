@@ -31,8 +31,8 @@ const FeedbackForm = ({
   return (
     <div style={{
       width: '100%',
-      height: feedbackSectionNeedsExtraHeight || feedbackSubmitted ? '550px' : '450px',
-      padding: '20px 20px 60px 20px',
+      height: feedbackSectionNeedsExtraHeight || feedbackSubmitted ? '500px' : '400px',
+      padding: '15px 20px 90px 20px',
       boxSizing: 'border-box',
       display: 'flex',
       flexDirection: 'column',
@@ -48,12 +48,13 @@ const FeedbackForm = ({
         flex: 1,
         position: 'relative',
         zIndex: 3,
-        paddingTop: '5px'
+        paddingTop: '5px',
+        paddingBottom: '50px'
       }}>
         <h2 style={{ 
-          fontSize: '26px', 
+          fontSize: '22px', 
           fontWeight: '600', 
-          marginBottom: '15px',
+          marginBottom: '10px',
           color: '#2c3e50',
           letterSpacing: '0.5px',
           display: 'flex',
@@ -65,12 +66,12 @@ const FeedbackForm = ({
         </h2>
         
         <p style={{ 
-          fontSize: '15px', 
+          fontSize: '14px', 
           textAlign: 'center', 
           maxWidth: '700px',
-          margin: '0 0 15px 0',
+          margin: '0 0 10px 0',
           color: '#34495e',
-          lineHeight: '1.5'
+          lineHeight: '1.4'
         }}>
           Please share your feedback and include screenshots of any issues you encounter.
         </p>
@@ -80,7 +81,7 @@ const FeedbackForm = ({
           onChange={(e) => setFeedback(e.target.value)}
           style={{
             width: '80%',
-            height: '120px',
+            height: '80px',
             padding: '12px',
             border: '1px solid #ccc',
             borderRadius: '6px',
@@ -249,13 +250,13 @@ const FeedbackForm = ({
         <button
           onClick={submitFeedback}
           style={{
-            padding: '10px 20px',
+            padding: '8px 16px',
             backgroundColor: '#4a6741',
             color: 'white',
             border: 'none',
             borderRadius: '6px',
             cursor: 'pointer',
-            fontSize: '15px',
+            fontSize: '14px',
             fontWeight: '600',
             display: 'flex',
             alignItems: 'center',
@@ -264,13 +265,13 @@ const FeedbackForm = ({
             boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
           }}
         >
-          <FaPaperPlane size={14} />
+          <FaPaperPlane size={12} />
           Submit Feedback
         </button>
         
         {feedbackSubmitted && (
           <div style={{ 
-            marginTop: '15px', 
+            marginTop: '10px', 
             padding: '8px 12px',
             backgroundColor: '#e6f7e6',
             border: '1px solid #c3e6cb',
