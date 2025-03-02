@@ -6,6 +6,13 @@ interface LayoutProps {
 }
 
 const Layout = ({ children, feedbackSectionNeedsExtraHeight }: LayoutProps) => {
+  // Define consistent dimensions
+  const headerHeight = '100px';
+  const featuresHeight = '350px';
+  const greenSectionHeight = '950px';
+  const feedbackHeight = feedbackSectionNeedsExtraHeight ? '500px' : '400px';
+  const sideBoxWidth = '180px';
+  
   return (
     <div style={{ 
       width: '100%', 
@@ -22,17 +29,17 @@ const Layout = ({ children, feedbackSectionNeedsExtraHeight }: LayoutProps) => {
         top: 0,
         left: 0,
         width: '100%',
-        height: '100px',
+        height: headerHeight,
         backgroundColor: '#edc077',
         zIndex: 0
       }}></div>
       
       <div style={{
         position: 'absolute',
-        top: '100px',
+        top: headerHeight,
         left: 0,
         width: '100%',
-        height: '350px',
+        height: featuresHeight,
         backgroundColor: '#b5b2ae',
         zIndex: 0
       }}></div>
@@ -40,20 +47,20 @@ const Layout = ({ children, feedbackSectionNeedsExtraHeight }: LayoutProps) => {
       {/* Green section with fixed height */}
       <div id="greenSection" style={{
         position: 'absolute',
-        top: '450px',
+        top: `calc(${headerHeight} + ${featuresHeight})`,
         left: 0,
         width: '100%',
-        height: '950px', /* Fixed height matching the content wrapper */
+        height: greenSectionHeight,
         backgroundColor: '#c7edd4',
         zIndex: 0
       }}></div>
       
       <div style={{
         position: 'absolute',
-        top: '1400px', /* 450px + 950px */
+        top: `calc(${headerHeight} + ${featuresHeight} + ${greenSectionHeight})`,
         left: 0,
         width: '100%',
-        height: feedbackSectionNeedsExtraHeight ? '500px' : '400px',
+        height: feedbackHeight,
         backgroundColor: '#c7caed',
         zIndex: 0
       }}></div>
@@ -61,7 +68,7 @@ const Layout = ({ children, feedbackSectionNeedsExtraHeight }: LayoutProps) => {
       {/* Left side box */}
       <div style={{
         backgroundColor: '#f2c4aa',
-        width: '180px',
+        width: sideBoxWidth,
         position: 'absolute',
         top: 0,
         left: 0,
@@ -72,7 +79,7 @@ const Layout = ({ children, feedbackSectionNeedsExtraHeight }: LayoutProps) => {
       {/* Right side box */}
       <div style={{
         backgroundColor: '#f2c4aa',
-        width: '180px',
+        width: sideBoxWidth,
         position: 'absolute',
         top: 0,
         right: 0,
@@ -83,10 +90,10 @@ const Layout = ({ children, feedbackSectionNeedsExtraHeight }: LayoutProps) => {
       {/* Main content */}
       <div style={{
         position: 'relative',
-        width: 'calc(100% - 360px)',
+        width: `calc(100% - ${parseInt(sideBoxWidth) * 2}px)`,
         maxWidth: '1200px',
         margin: '0 auto',
-        marginLeft: '180px',
+        marginLeft: sideBoxWidth,
         paddingTop: '0',
         zIndex: 2
       }}>

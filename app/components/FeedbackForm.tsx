@@ -29,15 +29,14 @@ const FeedbackForm = ({
   return (
     <div style={{
       width: '100%',
-      minHeight: '300px',
+      height: feedbackSectionNeedsExtraHeight ? '500px' : '400px',
       padding: '20px 20px 40px 20px',
       boxSizing: 'border-box',
-      flex: 1,
       display: 'flex',
       flexDirection: 'column',
       position: 'relative',
       zIndex: 2,
-      marginTop: '0'
+      overflow: 'auto'
     }}>
       <div style={{ 
         display: 'flex', 

@@ -7,15 +7,14 @@ const Features: React.FC = () => {
   return (
     <div style={{
       width: '100%',
-      minHeight: '350px',
+      height: '350px',
       padding: '15px 20px 15px 20px',
       boxSizing: 'border-box',
-      flex: 1,
       display: 'flex',
       flexDirection: 'column',
       position: 'relative',
       zIndex: 2,
-      maxHeight: '350px'
+      overflow: 'hidden'
     }}>
       {/* AI-created info banner */}
       <div style={{

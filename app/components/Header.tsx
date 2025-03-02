@@ -8,13 +8,14 @@ const Header: React.FC = () => {
   return (
     <div style={{
       width: '100%',
-      minHeight: '100px',
+      height: '100px',
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
       borderBottom: '1px solid #ddd',
       boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-      padding: '10px 0'
+      padding: '10px 0',
+      boxSizing: 'border-box'
     }}>
       {/* Header content */}
       <div style={{
