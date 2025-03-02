@@ -57,31 +57,33 @@ const Controls: React.FC<ControlsProps> = ({
     }}>
       <h2 style={{ 
         fontSize: '24px', 
-        fontWeight: 'bold',
-        color: '#333',
+        fontWeight: '600',
+        color: '#2c3e50',
         textAlign: 'center',
-        marginBottom: '10px',
-        marginTop: '0'
+        marginBottom: '12px',
+        marginTop: '0',
+        letterSpacing: '0.5px'
       }}>
-        CONTROLS
+        Document Controls
       </h2>
       
       {/* Detailed instructions for controls section */}
       <div style={{
         backgroundColor: 'rgba(255,255,255,0.7)',
-        padding: '10px 15px',
-        borderRadius: '5px',
+        padding: '12px 15px',
+        borderRadius: '8px',
         marginBottom: '15px',
-        border: '1px solid #ddd'
+        border: '1px solid #ddd',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.05)'
       }}>
-        <p style={{ fontSize: '14px', margin: '0 0 8px 0', lineHeight: '1.4' }}>
+        <p style={{ fontSize: '14px', margin: '0 0 8px 0', lineHeight: '1.5', color: '#34495e' }}>
           <strong>Step 1:</strong> Upload your PDF document using the file selector below.
         </p>
-        <p style={{ fontSize: '14px', margin: '0 0 8px 0', lineHeight: '1.4' }}>
-          <strong>Step 2:</strong> Customize the note space by adjusting its width, position, and color.
+        <p style={{ fontSize: '14px', margin: '0 0 8px 0', lineHeight: '1.5', color: '#34495e' }}>
+          <strong>Step 2:</strong> Customize the note space by adjusting its width, position, and color to match your preferences.
         </p>
-        <p style={{ fontSize: '14px', margin: '0', lineHeight: '1.4' }}>
-          <strong>Step 3:</strong> Download your modified PDF and open it in any PDF viewer or annotation tool to start taking notes.
+        <p style={{ fontSize: '14px', margin: '0', lineHeight: '1.5', color: '#34495e' }}>
+          <strong>Step 3:</strong> Download your enhanced PDF and open it in any PDF viewer or annotation tool to begin taking notes.
         </p>
       </div>
       
@@ -94,7 +96,7 @@ const Controls: React.FC<ControlsProps> = ({
         justifyContent: 'flex-start'
       }}>
         <div style={{ marginBottom: '20px' }}>
-          <p style={{ fontWeight: 'bold', marginBottom: '5px' }}>Upload PDF</p>
+          <p style={{ fontWeight: '600', marginBottom: '5px', color: '#2c3e50', fontSize: '15px' }}>Upload PDF</p>
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <input
               ref={fileInputRef}

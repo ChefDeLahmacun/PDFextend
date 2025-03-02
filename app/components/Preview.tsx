@@ -20,32 +20,42 @@ const Preview: React.FC<PreviewProps> = ({ file, isProcessing, pdfPreviewUrl }) 
     }}>
       <h2 style={{ 
         fontSize: '24px', 
-        fontWeight: 'bold',
-        color: '#333',
+        fontWeight: '600',
+        color: '#2c3e50',
         textAlign: 'center',
-        marginBottom: '10px',
-        marginTop: '0'
+        marginBottom: '12px',
+        marginTop: '0',
+        letterSpacing: '0.5px'
       }}>
-        PREVIEW
+        Document Preview
       </h2>
       
       {/* How-to-use instructions */}
       <div style={{
         backgroundColor: 'rgba(255,255,255,0.7)',
-        padding: '10px 15px',
-        borderRadius: '5px',
+        padding: '12px 15px',
+        borderRadius: '8px',
         marginBottom: '15px',
-        border: '1px solid #ddd'
+        border: '1px solid #ddd',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.05)'
       }}>
-        <p style={{ fontSize: '14px', margin: '0', lineHeight: '1.4' }}>
-          <strong>How to use:</strong> Upload your PDF, select where to add note-taking space and customize its width and color. 
-          Download the modified PDF and open it in your preferred application to start taking notes in the added space.
+        <p style={{ fontSize: '14px', margin: '0', lineHeight: '1.5', color: '#34495e' }}>
+          <strong>Document Workflow:</strong> Upload your PDF, customize the note-taking space to your specifications, 
+          and download the enhanced document. Your modified PDF will be ready for annotations in any standard PDF viewer.
         </p>
       </div>
       
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
         <div style={{ marginBottom: '20px' }}>
-          <h3 style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '5px', marginTop: '0' }}>Original</h3>
+          <h3 style={{ 
+            fontSize: '18px', 
+            fontWeight: '600', 
+            marginBottom: '8px', 
+            marginTop: '0',
+            color: '#2c3e50'
+          }}>
+            Original Document
+          </h3>
           <div style={{ 
             height: '300px',
             border: '1px solid #ddd',

@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Image from 'next/image';
+import { FaFileAlt } from 'react-icons/fa';
 
 const Header: React.FC = () => {
   return (
@@ -12,7 +13,8 @@ const Header: React.FC = () => {
       justifyContent: 'center',
       alignItems: 'center',
       borderBottom: '1px solid #ddd',
-      boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+      boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+      padding: '10px 0'
     }}>
       {/* Header content */}
       <div style={{
@@ -30,7 +32,8 @@ const Header: React.FC = () => {
           alignItems: 'center',
           overflow: 'hidden',
           border: '1px solid #ddd',
-          padding: '3px'
+          padding: '3px',
+          boxShadow: '0 3px 6px rgba(0,0,0,0.1)'
         }}>
           <Image 
             src="/images/Logo.png"
@@ -48,11 +51,29 @@ const Header: React.FC = () => {
           />
         </div>
         <div style={{
-          fontSize: '28px',
-          fontWeight: 'bold',
-          color: '#333'
+          display: 'flex',
+          flexDirection: 'column'
         }}>
-          SpaceMyPDF
+          <div style={{
+            fontSize: '32px',
+            fontWeight: 'bold',
+            color: '#2c3e50',
+            letterSpacing: '0.5px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px'
+          }}>
+            <FaFileAlt style={{ color: '#4a6741' }} />
+            <span>SpaceMyPDF</span>
+          </div>
+          <div style={{
+            fontSize: '14px',
+            color: '#555',
+            fontStyle: 'italic',
+            marginTop: '2px'
+          }}>
+            Enhance your PDFs with customizable note-taking space
+          </div>
         </div>
       </div>
     </div>

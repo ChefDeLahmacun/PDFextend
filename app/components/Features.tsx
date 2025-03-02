@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { FaUserFriends, FaSlidersH, FaLock, FaGift } from 'react-icons/fa';
 
 const Features: React.FC = () => {
   return (
@@ -32,15 +33,17 @@ const Features: React.FC = () => {
         maxWidth: '100%'
       }}>
         <p style={{ margin: '0', maxWidth: '100%' }}>
-          <strong>Created with AI:</strong> This website was developed using artificial intelligence. Please share any feedback or report bugs using the form at the bottom of the page.
+          <strong>Enhanced with AI:</strong> This tool was developed to streamline your document workflow. We welcome your feedback via the form below.
         </p>
       </div>
       
       <h2 style={{
         textAlign: 'center',
-        margin: '0 0 10px 0',
+        margin: '0 0 15px 0',
         color: '#333',
-        fontSize: '24px'
+        fontSize: '26px',
+        fontWeight: '600',
+        letterSpacing: '0.5px'
       }}>
         Why Choose SpaceMyPDF?
       </h2>
@@ -54,23 +57,27 @@ const Features: React.FC = () => {
         overflow: 'auto'
       }}>
         <FeatureCard 
-          title="Easy to Use"
-          description="SpaceMyPDF allows you to easily add note space to your PDFs. Perfect for students, professionals, and anyone who needs more room for annotations."
+          icon={<FaUserFriends size={24} color="#4a6741" />}
+          title="Intuitive Interface"
+          description="Transform your PDFs with just a few clicks. Our streamlined process makes adding note space effortless for students, researchers, and professionals alike."
         />
         
         <FeatureCard 
-          title="Customizable"
-          description="Adjust the note space width to fit your needs. Whether you need a small margin or a full page for notes, SpaceMyPDF has you covered."
+          icon={<FaSlidersH size={24} color="#4a6741" />}
+          title="Fully Customizable"
+          description="Tailor the note space to your exact requirements. Adjust width, position, and color to complement your workflow and enhance your productivity."
         />
         
         <FeatureCard 
-          title="Private & Secure"
-          description="All processing happens directly in your browser. Your PDFs never leave your device, ensuring complete privacy and security for your sensitive documents."
+          icon={<FaLock size={24} color="#4a6741" />}
+          title="Privacy Guaranteed"
+          description="Your documents never leave your device. All processing happens locally in your browser, ensuring complete confidentiality for sensitive materials."
         />
         
         <FeatureCard 
-          title="Free to Use"
-          description="SpaceMyPDF is completely free to use. No registration required, no hidden fees, and no limits on the number of PDFs you can process."
+          icon={<FaGift size={24} color="#4a6741" />}
+          title="Always Free"
+          description="Access professional-grade PDF enhancement without cost. No registration, subscriptions, or hidden fees—just powerful functionality when you need it."
         />
       </div>
     </div>
@@ -78,23 +85,31 @@ const Features: React.FC = () => {
 };
 
 interface FeatureCardProps {
+  icon: React.ReactNode;
   title: string;
   description: string;
 }
 
-const FeatureCard: React.FC<FeatureCardProps> = ({ title, description }) => {
+const FeatureCard: React.FC<FeatureCardProps> = ({ icon, title, description }) => {
   return (
     <div style={{
       flex: 1,
       backgroundColor: 'rgba(255,255,255,0.7)',
-      padding: '12px',
-      borderRadius: '5px',
+      padding: '15px',
+      borderRadius: '8px',
       height: '130px',
       overflow: 'auto',
-      marginBottom: '10px'
+      marginBottom: '10px',
+      boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+      transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+      cursor: 'default',
+      minWidth: '200px'
     }}>
-      <h3 style={{ margin: '0 0 8px 0', fontSize: '18px' }}>{title}</h3>
-      <p style={{ margin: '0', fontSize: '13px', lineHeight: '1.3' }}>
+      <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
+        <div style={{ marginRight: '10px' }}>{icon}</div>
+        <h3 style={{ margin: '0', fontSize: '18px', fontWeight: '600', color: '#2c3e50' }}>{title}</h3>
+      </div>
+      <p style={{ margin: '0', fontSize: '13px', lineHeight: '1.4', color: '#34495e' }}>
         {description}
       </p>
     </div>
