@@ -24,24 +24,35 @@ export default function PDFUpload({ onFileUpload }: PDFUploadProps) {
     accept: {
       'application/pdf': ['.pdf']
     },
-    multiple: false
+    multiple: false,
+    maxSize: 50 * 1024 * 1024 // 50MB
   });
 
   return (
     <div
       {...getRootProps()}
-      className={`p-8 border-2 border-dashed rounded-lg text-center cursor-pointer transition-colors
-        ${isDragActive ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:border-blue-500'}`}
+      style={{
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}
     >
       <input {...getInputProps()} />
-      {isDragActive ? (
-        <p className="text-blue-500">Drop the PDF file here</p>
-      ) : (
-        <div>
-          <p className="text-gray-600">Drag and drop a PDF file here, or click to select a file</p>
-          <p className="text-sm text-gray-400 mt-2">Only PDF files are accepted</p>
-        </div>
-      )}
+      <button style={{
+        padding: '8px 16px',
+        backgroundColor: '#f0f0f0',
+        border: '1px solid #ccc',
+        marginBottom: '8px',
+        cursor: 'pointer',
+        borderRadius: '3px'
+      }}>
+        CHOOSE FILES
+      </button>
+      <p>or drop PDF files here</p>
+      <p style={{ fontSize: '14px', marginTop: '8px' }}>Max size: 50MB PDF files only</p>
     </div>
   );
 } 
