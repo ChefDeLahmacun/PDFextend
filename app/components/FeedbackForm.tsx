@@ -31,8 +31,8 @@ const FeedbackForm = ({
   return (
     <div style={{
       width: '100%',
-      height: feedbackSectionNeedsExtraHeight ? '500px' : (feedbackSubmitted ? '350px' : '400px'),
-      padding: feedbackSubmitted ? '15px 20px 50px 20px' : '15px 20px 90px 20px',
+      height: feedbackSubmitted ? '410px' : (feedbackSectionNeedsExtraHeight ? '500px' : '400px'),
+      padding: feedbackSubmitted ? '15px 20px 90px 20px' : '15px 20px 90px 20px',
       boxSizing: 'border-box',
       display: 'flex',
       flexDirection: 'column',
@@ -49,7 +49,7 @@ const FeedbackForm = ({
         position: 'relative',
         zIndex: 3,
         paddingTop: '5px',
-        paddingBottom: feedbackSubmitted ? '30px' : '50px'
+        paddingBottom: '50px'
       }}>
         <h2 style={{ 
           fontSize: '22px', 
@@ -271,24 +271,24 @@ const FeedbackForm = ({
         
         {feedbackSubmitted && (
           <div style={{ 
-            marginTop: '10px', 
-            padding: '8px 12px',
+            marginTop: '5px', 
+            padding: '5px 8px',
             backgroundColor: '#e6f7e6',
             border: '1px solid #c3e6cb',
             borderRadius: '4px',
             color: '#155724',
-            fontSize: '14px',
+            fontSize: '12px',
             textAlign: 'center',
             boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
             width: '100%',
-            maxWidth: '300px'
+            maxWidth: '250px'
           }}>
-            <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-.997-6l7.07-7.071-1.414-1.414-5.656 5.657-2.829-2.829-1.414 1.414L11.003 16z" 
                   fill="currentColor"/>
               </svg>
-              Feedback submitted successfully!
+              Feedback submitted!
             </span>
           </div>
         )}
