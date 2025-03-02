@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 
 const Header: React.FC = () => {
   return (
@@ -20,8 +21,8 @@ const Header: React.FC = () => {
         gap: '15px'
       }}>
         <div style={{
-          width: '60px',
-          height: '60px',
+          width: '80px',
+          height: '80px',
           backgroundColor: 'white',
           borderRadius: '50%',
           display: 'flex',
@@ -29,16 +30,22 @@ const Header: React.FC = () => {
           alignItems: 'center',
           overflow: 'hidden',
           border: '1px solid #ddd',
-          padding: '8px'
+          padding: '3px'
         }}>
-          <div style={{
-            width: '100%',
-            height: '100%',
-            backgroundImage: `url('../images/SpaceMyPDF_Logo.jpeg')`,
-            backgroundSize: 'contain',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat'
-          }}></div>
+          <Image 
+            src="/images/Logo.png"
+            alt="PDFextend Logo"
+            width={70}
+            height={70}
+            style={{
+              borderRadius: '50%',
+              objectFit: 'cover',
+              width: '100%',
+              height: '100%',
+              transform: 'scale(1.1)'
+            }}
+            priority
+          />
         </div>
         <div style={{
           fontSize: '28px',
