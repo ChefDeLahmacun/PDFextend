@@ -83,7 +83,7 @@ const Layout = ({ children, feedbackSectionNeedsExtraHeight }: LayoutProps) => {
         width: '100%', 
         minHeight: '85vh',
         position: 'relative',
-        overflow: 'hidden',
+        overflow: 'visible',
         backgroundColor: '#f2c4aa',
         border: 'none',
         outline: 'none'
@@ -123,11 +123,13 @@ const Layout = ({ children, feedbackSectionNeedsExtraHeight }: LayoutProps) => {
         <div style={{
           position: 'absolute',
           top: `calc(${headerHeight} + ${featuresHeight} + ${greenSectionHeight})`,
-          left: 0,
-          width: '100%',
+          left: sideBoxWidth,
+          width: `calc(100% - ${parseInt(sideBoxWidth) * 2}px)`,
           height: feedbackHeight,
           backgroundColor: '#c7caed',
-          zIndex: 0
+          zIndex: 2,
+          borderBottomLeftRadius: '30px',
+          borderBottomRightRadius: '30px'
         }}></div>
         
         {/* Left side box */}
@@ -160,7 +162,7 @@ const Layout = ({ children, feedbackSectionNeedsExtraHeight }: LayoutProps) => {
           margin: '0 auto',
           marginLeft: sideBoxWidth,
           paddingTop: '0',
-          zIndex: 2
+          zIndex: 3
         }}>
           {children}
         </div>
