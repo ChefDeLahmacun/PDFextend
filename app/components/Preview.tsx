@@ -16,7 +16,7 @@ const Preview: React.FC<PreviewProps> = ({ file, isProcessing, pdfPreviewUrl }) 
       position: 'relative',
       display: 'flex',
       flexDirection: 'column',
-      overflow: 'hidden'
+      overflow: 'visible'
     }}>
       <h2 style={{ 
         fontSize: '24px', 
@@ -27,7 +27,7 @@ const Preview: React.FC<PreviewProps> = ({ file, isProcessing, pdfPreviewUrl }) 
         marginTop: '0',
         letterSpacing: '0.5px'
       }}>
-        Document Preview
+        Preview
       </h2>
       
       {/* How-to-use instructions */}
@@ -40,8 +40,8 @@ const Preview: React.FC<PreviewProps> = ({ file, isProcessing, pdfPreviewUrl }) 
         boxShadow: '0 1px 3px rgba(0,0,0,0.05)'
       }}>
         <p style={{ fontSize: '14px', margin: '0', lineHeight: '1.5', color: '#34495e' }}>
-          <strong>Document Workflow:</strong> Upload your PDF, customize the note-taking space to your specifications, 
-          and download the enhanced document. Your modified PDF will be ready for annotations in any standard PDF viewer.
+          <strong>How to use:</strong> Upload your PDF, adjust the note space to fit your needs, 
+          and download. Open the downloaded PDF in your preferred note-taking application to start writing notes in the added space.
         </p>
       </div>
       

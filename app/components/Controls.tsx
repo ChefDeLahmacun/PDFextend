@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useLayoutEffect } from 'react';
 
 interface ControlsProps {
   file: File | null;
@@ -47,13 +47,19 @@ const Controls: React.FC<ControlsProps> = ({
   downloadIsProcessing,
   predefinedColors
 }) => {
+  // Simple effect to trigger resize when important props change
+  useEffect(() => {
+    // Dispatch a resize event when file or colorOption changes
+    window.dispatchEvent(new Event('resize'));
+  }, [file, colorOption]);
+
   return (
     <div style={{
       flex: 2,
       padding: '20px',
       display: 'flex',
       flexDirection: 'column',
-      overflow: 'hidden'
+      overflow: 'visible'
     }}>
       <h2 style={{ 
         fontSize: '24px', 
@@ -64,7 +70,7 @@ const Controls: React.FC<ControlsProps> = ({
         marginTop: '0',
         letterSpacing: '0.5px'
       }}>
-        Document Controls
+        Settings
       </h2>
       
       {/* Detailed instructions for controls section */}
@@ -77,13 +83,13 @@ const Controls: React.FC<ControlsProps> = ({
         boxShadow: '0 1px 3px rgba(0,0,0,0.05)'
       }}>
         <p style={{ fontSize: '14px', margin: '0 0 8px 0', lineHeight: '1.5', color: '#34495e' }}>
-          <strong>Step 1:</strong> Upload your PDF document using the file selector below.
+          <strong>Step 1:</strong> Upload your PDF below.
         </p>
         <p style={{ fontSize: '14px', margin: '0 0 8px 0', lineHeight: '1.5', color: '#34495e' }}>
-          <strong>Step 2:</strong> Customize the note space by adjusting its width, position, and color to match your preferences.
+          <strong>Step 2:</strong> Choose how wide you want your note space and where you want it.
         </p>
         <p style={{ fontSize: '14px', margin: '0', lineHeight: '1.5', color: '#34495e' }}>
-          <strong>Step 3:</strong> Download your enhanced PDF and open it in any PDF viewer or annotation tool to begin taking notes.
+          <strong>Step 3:</strong> Download your PDF and open it in your preferred note-taking application to start writing notes.
         </p>
       </div>
       
@@ -125,7 +131,7 @@ const Controls: React.FC<ControlsProps> = ({
                 cursor: 'pointer'
               }}
             >
-              Clear PDF
+              Clear Document
             </button>
           </div>
         )}

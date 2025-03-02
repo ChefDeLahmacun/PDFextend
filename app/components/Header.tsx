@@ -38,7 +38,7 @@ const Header: React.FC = () => {
         }}>
           <Image 
             src="/images/Logo.png"
-            alt="PDFextend Logo"
+            alt="Document Extender Logo"
             width={70}
             height={70}
             style={{
@@ -64,7 +64,6 @@ const Header: React.FC = () => {
             alignItems: 'center',
             gap: '8px'
           }}>
-            <FaFileAlt style={{ color: '#4a6741' }} />
             <span>SpaceMyPDF</span>
           </div>
           <div style={{
@@ -73,7 +72,7 @@ const Header: React.FC = () => {
             fontStyle: 'italic',
             marginTop: '2px'
           }}>
-            Enhance your PDFs with customizable note-taking space
+            Add note space to your PDFs easily
           </div>
         </div>
       </div>

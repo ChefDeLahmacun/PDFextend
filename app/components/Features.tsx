@@ -7,7 +7,7 @@ const Features: React.FC = () => {
   return (
     <div style={{
       width: '100%',
-      height: '350px',
+      height: '280px',
       padding: '15px 20px 15px 20px',
       boxSizing: 'border-box',
       display: 'flex',
@@ -20,63 +20,63 @@ const Features: React.FC = () => {
       <div style={{
         width: 'calc(100% - 20px)',
         margin: '0 auto',
-        padding: '8px 15px',
+        padding: '5px 10px',
         backgroundColor: 'rgba(255,255,255,0.7)',
         borderRadius: '5px',
         textAlign: 'center',
-        fontSize: '14px',
+        fontSize: '13px',
         color: '#555',
-        marginBottom: '15px',
+        marginBottom: '10px',
         boxSizing: 'border-box',
         wordWrap: 'break-word',
         maxWidth: '100%'
       }}>
         <p style={{ margin: '0', maxWidth: '100%' }}>
-          <strong>Enhanced with AI:</strong> This tool was developed to streamline your document workflow. We welcome your feedback via the form below.
+          <strong>About this tool:</strong> We created this to help you take better notes on your PDFs. We'd love to hear what you think!
         </p>
       </div>
       
       <h2 style={{
         textAlign: 'center',
-        margin: '0 0 15px 0',
+        margin: '0 0 10px 0',
         color: '#333',
-        fontSize: '26px',
+        fontSize: '22px',
         fontWeight: '600',
         letterSpacing: '0.5px'
       }}>
-        Why Choose SpaceMyPDF?
+        How This Tool Helps You
       </h2>
       
       <div style={{
         display: 'flex',
         flexWrap: 'wrap',
         justifyContent: 'space-between',
-        gap: '15px',
-        height: '200px',
-        overflow: 'auto'
+        gap: '12px',
+        height: '170px',
+        overflow: 'visible'
       }}>
         <FeatureCard 
           icon={<FaUserFriends size={24} color="#4a6741" />}
-          title="Intuitive Interface"
-          description="Transform your PDFs with just a few clicks. Our streamlined process makes adding note space effortless for students, researchers, and professionals alike."
+          title="Easy to Use"
+          description="Add note space to your PDFs with just a few clicks. Perfect for students, researchers, and anyone who takes notes."
         />
         
         <FeatureCard 
           icon={<FaSlidersH size={24} color="#4a6741" />}
-          title="Fully Customizable"
-          description="Tailor the note space to your exact requirements. Adjust width, position, and color to complement your workflow and enhance your productivity."
+          title="Make It Your Own"
+          description="Choose where you want your note space and how it looks. Pick the width, position, and color that works best for you."
         />
         
         <FeatureCard 
           icon={<FaLock size={24} color="#4a6741" />}
-          title="Privacy Guaranteed"
-          description="Your documents never leave your device. All processing happens locally in your browser, ensuring complete confidentiality for sensitive materials."
+          title="Your Documents Stay Private"
+          description="Everything happens on your computer. Your documents never get uploaded to any server, keeping your information safe."
         />
         
         <FeatureCard 
           icon={<FaGift size={24} color="#4a6741" />}
           title="Always Free"
-          description="Access professional-grade PDF enhancement without cost. No registration, subscriptions, or hidden fees—just powerful functionality when you need it."
+          description="Use this tool as much as you want without paying anything. No sign-ups, no subscriptions, no hidden costs."
         />
       </div>
     </div>
@@ -94,11 +94,11 @@ const FeatureCard: React.FC<FeatureCardProps> = ({ icon, title, description }) =
     <div style={{
       flex: 1,
       backgroundColor: 'rgba(255,255,255,0.7)',
-      padding: '15px',
+      padding: '12px',
       borderRadius: '8px',
-      height: '130px',
-      overflow: 'auto',
-      marginBottom: '10px',
+      height: '140px',
+      overflow: 'visible',
+      marginBottom: '8px',
       boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
       transition: 'transform 0.2s ease, box-shadow 0.2s ease',
       cursor: 'default',
@@ -108,7 +108,7 @@ const FeatureCard: React.FC<FeatureCardProps> = ({ icon, title, description }) =
         <div style={{ marginRight: '10px' }}>{icon}</div>
         <h3 style={{ margin: '0', fontSize: '18px', fontWeight: '600', color: '#2c3e50' }}>{title}</h3>
       </div>
-      <p style={{ margin: '0', fontSize: '13px', lineHeight: '1.4', color: '#34495e' }}>
+      <p style={{ margin: '0', fontSize: '14px', lineHeight: '1.4', color: '#34495e' }}>
         {description}
       </p>
     </div>

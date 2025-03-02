@@ -29,14 +29,14 @@ const FeedbackForm = ({
   return (
     <div style={{
       width: '100%',
-      height: feedbackSectionNeedsExtraHeight ? '500px' : '400px',
+      height: feedbackSectionNeedsExtraHeight ? '400px' : '300px',
       padding: '20px 20px 40px 20px',
       boxSizing: 'border-box',
       display: 'flex',
       flexDirection: 'column',
       position: 'relative',
       zIndex: 2,
-      overflow: 'auto'
+      overflow: 'visible'
     }}>
       <div style={{ 
         display: 'flex', 
@@ -59,18 +59,18 @@ const FeedbackForm = ({
           gap: '10px'
         }}>
           <FaComment style={{ color: '#4a6741' }} />
-          Share Your Feedback
+          Tell Us What You Think
         </h2>
         
         <p style={{ 
           fontSize: '15px', 
           textAlign: 'center', 
           maxWidth: '700px',
-          margin: '0 0 20px 0',
+          margin: '0 0 15px 0',
           color: '#34495e',
           lineHeight: '1.5'
         }}>
-          Your insights help us improve SpaceMyPDF. Please share any suggestions, report issues, or tell us how this tool has helped your workflow.
+          Please share your feedback and include screenshots of any issues you encounter.
         </p>
         
         <textarea
@@ -78,7 +78,7 @@ const FeedbackForm = ({
           onChange={(e) => setFeedback(e.target.value)}
           style={{
             width: '80%',
-            height: '80px',
+            height: '60px',
             padding: '12px',
             border: '1px solid #ccc',
             borderRadius: '6px',
@@ -91,7 +91,7 @@ const FeedbackForm = ({
             lineHeight: '1.5',
             color: '#2c3e50'
           }}
-          placeholder="Share your experience, suggestions, or report any issues you've encountered..."
+          placeholder="Share your thoughts, ideas, or any issues you've found. Screenshots of problems are very helpful!"
         />
         
         <div style={{

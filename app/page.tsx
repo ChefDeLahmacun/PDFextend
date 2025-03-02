@@ -1,11 +1,9 @@
 'use client';
 
-import { useState, useRef, useEffect, useLayoutEffect } from 'react';
+import React, { useState, useRef, useEffect, useLayoutEffect, useContext } from 'react';
 import { PDFDocument, rgb } from 'pdf-lib';
 import Image from 'next/image';
-
-// Import components
-import Layout from './components/Layout';
+import Layout, { GreenContentRefContext } from './components/Layout';
 import Header from './components/Header';
 import Features from './components/Features';
 import Controls from './components/Controls';
@@ -48,6 +46,22 @@ export default function Home() {
 
   // New state for tracking if the feedback section needs extra height
   const [feedbackSectionNeedsExtraHeight, setFeedbackSectionNeedsExtraHeight] = useState(false);
+  
+  // Add state to track if the component is fully mounted and measured
+  const [isContentReady, setIsContentReady] = useState(false);
+  
+  // Use useLayoutEffect to ensure everything is ready before rendering
+  useLayoutEffect(() => {
+    // Mark component as fully mounted after a delay
+    // This ensures all DOM elements are properly rendered
+    const timer = setTimeout(() => {
+      setIsContentReady(true);
+      // Force a resize event after mounting
+      window.dispatchEvent(new Event('resize'));
+    }, 300); // Increased delay to ensure all measurements are complete
+    
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleFileUpload = (uploadedFile: File) => {
     if (uploadedFile.size > 50 * 1024 * 1024) { // 50MB
@@ -497,77 +511,107 @@ export default function Home() {
 
   return (
     <Layout feedbackSectionNeedsExtraHeight={feedbackSectionNeedsExtraHeight}>
-      <Header />
-      
-      <Features />
-      
       <div 
-        className="green-content-wrapper"
-        style={{
+        style={{ 
           width: '100%',
-          height: '950px',
-          display: 'flex',
-          boxSizing: 'border-box',
-          paddingBottom: '60px',
-          borderBottom: '1px solid #ddd',
-          boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-          overflow: 'hidden'
-        }}>
-        <div style={{
-          display: 'flex',
-          flexDirection: 'row',
-          gap: '20px',
-          flex: 1,
-          flexWrap: 'wrap'
-        }}>
-          <Preview 
-            file={file}
-            isProcessing={isProcessing}
-            pdfPreviewUrl={pdfPreviewUrl}
-          />
-          
+          visibility: isContentReady ? 'visible' : 'hidden', // Hide content until ready
+          opacity: isContentReady ? 1 : 0, // Fade in when ready
+          transition: 'opacity 0.1s ease-in' // Smooth transition
+        }}
+      >
+        <Header />
+        <Features />
+        
+        <GreenContentWrapper>
           <div style={{
-            width: '1px',
-            backgroundColor: 'black',
-            height: '100%'
-          }}></div>
-          
-          <Controls 
-            file={file}
-            noteSpaceWidth={noteSpaceWidth}
-            setNoteSpaceWidth={setNoteSpaceWidth}
-            noteSpacePosition={noteSpacePosition}
-            setNoteSpacePosition={setNoteSpacePosition}
-            colorOption={colorOption}
-            setColorOption={setColorOption}
-            customColor={customColor}
-            setCustomColor={setCustomColor}
-            baseFileName={baseFileName}
-            handleBaseFileNameChange={handleBaseFileNameChange}
-            includeWithNotes={includeWithNotes}
-            handleCheckboxChange={handleCheckboxChange}
-            resetBaseFileName={resetBaseFileName}
-            fileInputRef={fileInputRef}
-            handleFileUpload={handleFileUpload}
-            clearFile={clearFile}
-            handleDownload={handleDownload}
-            downloadIsProcessing={downloadIsProcessing}
-            predefinedColors={predefinedColors}
-          />
-        </div>
+            display: 'flex',
+            flexDirection: 'row',
+            gap: '20px',
+            flex: 1,
+            flexWrap: 'wrap'
+          }}>
+            <Preview 
+              file={file}
+              isProcessing={isProcessing}
+              pdfPreviewUrl={pdfPreviewUrl}
+            />
+            
+            <div style={{
+              width: '1px',
+              backgroundColor: 'black',
+              height: '100%'
+            }}></div>
+            
+            <Controls 
+              file={file}
+              noteSpaceWidth={noteSpaceWidth}
+              setNoteSpaceWidth={setNoteSpaceWidth}
+              noteSpacePosition={noteSpacePosition}
+              setNoteSpacePosition={setNoteSpacePosition}
+              colorOption={colorOption}
+              setColorOption={setColorOption}
+              customColor={customColor}
+              setCustomColor={setCustomColor}
+              baseFileName={baseFileName}
+              handleBaseFileNameChange={handleBaseFileNameChange}
+              includeWithNotes={includeWithNotes}
+              handleCheckboxChange={handleCheckboxChange}
+              resetBaseFileName={resetBaseFileName}
+              fileInputRef={fileInputRef}
+              handleFileUpload={handleFileUpload}
+              clearFile={clearFile}
+              handleDownload={handleDownload}
+              downloadIsProcessing={downloadIsProcessing}
+              predefinedColors={predefinedColors}
+            />
+          </div>
+        </GreenContentWrapper>
+        
+        <FeedbackForm 
+          feedback={feedback}
+          setFeedback={setFeedback}
+          feedbackImages={feedbackImages}
+          feedbackImagePreviews={feedbackImagePreviews}
+          handleFeedbackImageUpload={handleFeedbackImageUpload}
+          clearAllFeedbackImages={clearAllFeedbackImages}
+          removeFeedbackImage={removeFeedbackImage}
+          submitFeedback={submitFeedback}
+          feedbackSectionNeedsExtraHeight={feedbackSectionNeedsExtraHeight}
+        />
       </div>
-      
-      <FeedbackForm 
-        feedback={feedback}
-        setFeedback={setFeedback}
-        feedbackImages={feedbackImages}
-        feedbackImagePreviews={feedbackImagePreviews}
-        handleFeedbackImageUpload={handleFeedbackImageUpload}
-        clearAllFeedbackImages={clearAllFeedbackImages}
-        removeFeedbackImage={removeFeedbackImage}
-        submitFeedback={submitFeedback}
-        feedbackSectionNeedsExtraHeight={feedbackSectionNeedsExtraHeight}
-      />
     </Layout>
+  );
+}
+
+// Component to wrap the green content and use the context
+function GreenContentWrapper({ children }: { children: React.ReactNode }) {
+  const greenContentRef = useContext(GreenContentRefContext);
+  
+  // Simple effect to trigger resize events
+  useEffect(() => {
+    // Dispatch resize events at different intervals to ensure proper measurement
+    const timers = [0, 50, 100].map(delay => 
+      setTimeout(() => window.dispatchEvent(new Event('resize')), delay)
+    );
+    
+    return () => timers.forEach(clearTimeout);
+  }, []);
+  
+  return (
+    <div 
+      className="green-content-wrapper"
+      ref={greenContentRef || undefined}
+      style={{
+        width: '100%',
+        minHeight: '950px',
+        display: 'flex',
+        boxSizing: 'border-box',
+        paddingBottom: '60px',
+        borderBottom: '1px solid #ddd',
+        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+        overflow: 'visible'
+      }}>
+      {children}
+    </div>
   );
 }

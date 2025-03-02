@@ -101,3 +101,5 @@ button {
     display: none !important;
   }
 }
+
+/* Remove the content loading/ready states and fixed height rules */
