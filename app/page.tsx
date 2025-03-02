@@ -12,11 +12,13 @@ import FeedbackForm from './components/FeedbackForm';
 
 export default function Home() {
   const [file, setFile] = useState<File | null>(null);
-  const [noteSpaceWidth, setNoteSpaceWidth] = useState(200);
+  const [noteSpaceWidth, setNoteSpaceWidth] = useState(400);
   const [outputFileName, setOutputFileName] = useState('');
   const [baseFileName, setBaseFileName] = useState('');
   const [includeWithNotes, setIncludeWithNotes] = useState(false);
   const [feedback, setFeedback] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+  const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
   const [pdfPreviewUrl, setPdfPreviewUrl] = useState<string | { original: string, modified: string }>('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [totalPages, setTotalPages] = useState(0);
@@ -48,14 +50,17 @@ export default function Home() {
   const [feedbackSectionNeedsExtraHeight, setFeedbackSectionNeedsExtraHeight] = useState(false);
   
   // Add state to track if the component is fully mounted and measured
-  const [isContentReady, setIsContentReady] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+  
+  // New state for specifying save location
+  const [specifyLocation, setSpecifyLocation] = useState(false);
   
   // Use useLayoutEffect to ensure everything is ready before rendering
   useLayoutEffect(() => {
     // Mark component as fully mounted after a delay
     // This ensures all DOM elements are properly rendered
     const timer = setTimeout(() => {
-      setIsContentReady(true);
+      setIsMounted(true);
       // Force a resize event after mounting
       window.dispatchEvent(new Event('resize'));
     }, 300); // Increased delay to ensure all measurements are complete
@@ -64,22 +69,25 @@ export default function Home() {
   }, []);
 
   const handleFileUpload = (uploadedFile: File) => {
-    if (uploadedFile.size > 50 * 1024 * 1024) { // 50MB
+    // Check if file size exceeds 50MB
+    if (uploadedFile.size > 50 * 1024 * 1024) {
       alert('File size exceeds 50MB limit. Please choose a smaller file.');
       return;
     }
+    
     setFile(uploadedFile);
-    const baseName = uploadedFile.name.replace(/\.pdf$/, '');
-    setBaseFileName(baseName);
-    updateOutputFileName(baseName, includeWithNotes);
+    setBaseFileName(uploadedFile.name.replace('.pdf', ''));
+    updateOutputFileName(uploadedFile.name.replace('.pdf', ''), includeWithNotes);
+    setPdfPreviewUrl('');
+    setSuccessMessage('');
   };
 
   const clearFile = () => {
     setFile(null);
-    setOutputFileName('');
-    setBaseFileName('');
     setPdfPreviewUrl('');
-    // Reset the file input
+    setBaseFileName('');
+    setOutputFileName('');
+    setSuccessMessage('');
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -374,7 +382,7 @@ export default function Home() {
                 break;
             }
             
-            // Draw the rectangle
+            // Draw the colored rectangle
             newPage.drawRectangle({
               x,
               y,
@@ -385,37 +393,86 @@ export default function Home() {
           }
         } else {
           // If no note space is needed, just copy the original page
-          const [page] = await modifiedPdfDoc.copyPages(pdfDoc, [i]);
-          modifiedPdfDoc.addPage(page);
+          const [copiedPage] = await modifiedPdfDoc.copyPages(pdfDoc, [i]);
+          modifiedPdfDoc.addPage(copiedPage);
         }
       }
-
-      // Save the PDF
+      
+      // Save the modified PDF
       const modifiedPdfBytes = await modifiedPdfDoc.save();
       
-      // Create download link
-      const blob = new Blob([modifiedPdfBytes], { type: 'application/pdf' });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = outputFileName || file.name.replace('.pdf', '_with_notes.pdf');
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-
-      // After processing, show feedback
-      setIsProcessing(false);
-      setFeedback('PDF downloaded successfully!');
-      clearAllFeedbackImages();
-      setFeedbackSectionNeedsExtraHeight(false);
-
+      if (specifyLocation) {
+        // Use the File System Access API if available
+        if ('showSaveFilePicker' in window) {
+          try {
+            const suggestedName = outputFileName || file.name.replace('.pdf', '_with_notes.pdf');
+            const fileHandle = await (window as any).showSaveFilePicker({
+              suggestedName,
+              types: [{
+                description: 'PDF Document',
+                accept: { 'application/pdf': ['.pdf'] }
+              }]
+            });
+            
+            const writable = await fileHandle.createWritable();
+            await writable.write(modifiedPdfBytes);
+            await writable.close();
+            
+            // After processing, show success message
+            setIsProcessing(false);
+            setSuccessMessage('PDF saved successfully!');
+            
+            // Reset the success message after 5 seconds
+            setTimeout(() => {
+              setSuccessMessage('');
+            }, 5000);
+            
+            clearAllFeedbackImages();
+            setFeedbackSectionNeedsExtraHeight(false);
+          } catch (error) {
+            // User cancelled the save dialog
+            console.log('Save cancelled or failed:', error);
+          }
+        } else {
+          // Fallback for browsers that don't support File System Access API
+          alert('Your browser does not support the File System Access API. The file will be downloaded directly.');
+          downloadFile(modifiedPdfBytes);
+        }
+      } else {
+        // Direct download without dialog
+        downloadFile(modifiedPdfBytes);
+      }
     } catch (error) {
       console.error('Error processing PDF:', error);
       alert('Error processing PDF. Please try again with a different file.');
     } finally {
       setDownloadIsProcessing(false);
     }
+  };
+  
+  // Helper function to download file directly
+  const downloadFile = (pdfBytes: Uint8Array) => {
+    const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = outputFileName || file!.name.replace('.pdf', '_with_notes.pdf');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
+    // After processing, show success message
+    setIsProcessing(false);
+    setSuccessMessage('PDF downloaded successfully!');
+    
+    // Reset the success message after 5 seconds
+    setTimeout(() => {
+      setSuccessMessage('');
+    }, 5000);
+    
+    clearAllFeedbackImages();
+    setFeedbackSectionNeedsExtraHeight(false);
   };
 
   // Helper function to convert hex color to RGB
@@ -498,15 +555,23 @@ export default function Home() {
   // Submit feedback
   const submitFeedback = () => {
     // In a real application, you would send the feedback and images to a server
-    // For now, we'll just show an alert and clear the form
+    // For now, we'll just show a success message and clear the form
     setFeedback('');
     setFeedbackImages([]);
     setFeedbackImagePreviews([]);
-    setFeedbackSectionNeedsExtraHeight(false);
+    // Keep extra height while success message is shown
+    setFeedbackSectionNeedsExtraHeight(true);
+    setFeedbackSubmitted(true);
+    
+    // Reset the feedback submitted state and extra height after 5 seconds
+    setTimeout(() => {
+      setFeedbackSubmitted(false);
+      setFeedbackSectionNeedsExtraHeight(false);
+    }, 5000);
+    
     if (feedbackImageRef.current) {
       feedbackImageRef.current.value = '';
     }
-    alert('Thank you for your feedback!');
   };
 
   return (
@@ -514,8 +579,8 @@ export default function Home() {
       <div 
         style={{ 
           width: '100%',
-          visibility: isContentReady ? 'visible' : 'hidden', // Hide content until ready
-          opacity: isContentReady ? 1 : 0, // Fade in when ready
+          visibility: isMounted ? 'visible' : 'hidden', // Hide content until ready
+          opacity: isMounted ? 1 : 0, // Fade in when ready
           transition: 'opacity 0.1s ease-in' // Smooth transition
         }}
       >
@@ -563,6 +628,9 @@ export default function Home() {
               handleDownload={handleDownload}
               downloadIsProcessing={downloadIsProcessing}
               predefinedColors={predefinedColors}
+              specifyLocation={specifyLocation}
+              setSpecifyLocation={setSpecifyLocation}
+              successMessage={successMessage}
             />
           </div>
         </GreenContentWrapper>
@@ -577,6 +645,7 @@ export default function Home() {
           removeFeedbackImage={removeFeedbackImage}
           submitFeedback={submitFeedback}
           feedbackSectionNeedsExtraHeight={feedbackSectionNeedsExtraHeight}
+          feedbackSubmitted={feedbackSubmitted}
         />
       </div>
     </Layout>

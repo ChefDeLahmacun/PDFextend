@@ -23,6 +23,9 @@ interface ControlsProps {
   handleDownload: () => void;
   downloadIsProcessing: boolean;
   predefinedColors: { name: string; value: string }[];
+  specifyLocation: boolean;
+  setSpecifyLocation: (specify: boolean) => void;
+  successMessage: string;
 }
 
 const Controls: React.FC<ControlsProps> = ({
@@ -45,7 +48,10 @@ const Controls: React.FC<ControlsProps> = ({
   clearFile,
   handleDownload,
   downloadIsProcessing,
-  predefinedColors
+  predefinedColors,
+  specifyLocation,
+  setSpecifyLocation,
+  successMessage
 }) => {
   // Simple effect to trigger resize when important props change
   useEffect(() => {
@@ -425,23 +431,70 @@ const Controls: React.FC<ControlsProps> = ({
         </div>
         
         {file && (
-          <div style={{ marginBottom: '20px' }}>
-            <button
-              onClick={handleDownload}
-              disabled={downloadIsProcessing}
-              style={{
-                width: '100%',
-                padding: '8px 16px',
-                backgroundColor: 'white',
-                border: '1px solid black',
-                borderRadius: '3px',
-                cursor: downloadIsProcessing ? 'default' : 'pointer',
-                opacity: downloadIsProcessing ? 0.7 : 1
-              }}
-            >
-              {downloadIsProcessing ? 'Processing...' : 'Download PDF'}
-            </button>
-          </div>
+          <>
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              marginBottom: '15px',
+              gap: '8px'
+            }}>
+              <input
+                type="checkbox"
+                id="specifyLocation"
+                checked={specifyLocation}
+                onChange={(e) => setSpecifyLocation(e.target.checked)}
+                style={{ cursor: 'pointer' }}
+              />
+              <label 
+                htmlFor="specifyLocation" 
+                style={{ 
+                  fontSize: '14px',
+                  cursor: 'pointer'
+                }}
+              >
+                Specify where to save the document
+              </label>
+            </div>
+            
+            <div style={{ marginBottom: '20px' }}>
+              <button
+                onClick={handleDownload}
+                disabled={downloadIsProcessing}
+                style={{
+                  width: '100%',
+                  padding: '8px 16px',
+                  backgroundColor: 'white',
+                  border: '1px solid black',
+                  borderRadius: '3px',
+                  cursor: downloadIsProcessing ? 'default' : 'pointer',
+                  opacity: downloadIsProcessing ? 0.7 : 1
+                }}
+              >
+                {downloadIsProcessing ? 'Processing...' : 'Download PDF'}
+              </button>
+              {successMessage && (
+                <div style={{ 
+                  marginTop: '10px', 
+                  padding: '8px 12px',
+                  backgroundColor: '#e6f7e6',
+                  border: '1px solid #c3e6cb',
+                  borderRadius: '4px',
+                  color: '#155724',
+                  fontSize: '14px',
+                  textAlign: 'center',
+                  boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
+                }}>
+                  <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-.997-6l7.07-7.071-1.414-1.414-5.656 5.657-2.829-2.829-1.414 1.414L11.003 16z" 
+                        fill="currentColor"/>
+                    </svg>
+                    {successMessage}
+                  </span>
+                </div>
+              )}
+            </div>
+          </>
         )}
       </div>
     </div>

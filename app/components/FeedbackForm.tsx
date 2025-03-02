@@ -11,6 +11,7 @@ interface FeedbackFormProps {
   removeFeedbackImage: (index: number) => void;
   submitFeedback: () => void;
   feedbackSectionNeedsExtraHeight: boolean;
+  feedbackSubmitted: boolean;
 }
 
 const FeedbackForm = ({
@@ -22,15 +23,16 @@ const FeedbackForm = ({
   clearAllFeedbackImages,
   removeFeedbackImage,
   submitFeedback,
-  feedbackSectionNeedsExtraHeight
+  feedbackSectionNeedsExtraHeight,
+  feedbackSubmitted
 }: FeedbackFormProps) => {
   const feedbackImageRef = useRef<HTMLInputElement>(null);
 
   return (
     <div style={{
       width: '100%',
-      height: feedbackSectionNeedsExtraHeight ? '400px' : '300px',
-      padding: '20px 20px 40px 20px',
+      height: feedbackSectionNeedsExtraHeight || feedbackSubmitted ? '550px' : '450px',
+      padding: '20px 20px 60px 20px',
       boxSizing: 'border-box',
       display: 'flex',
       flexDirection: 'column',
@@ -78,18 +80,19 @@ const FeedbackForm = ({
           onChange={(e) => setFeedback(e.target.value)}
           style={{
             width: '80%',
-            height: '60px',
+            height: '120px',
             padding: '12px',
             border: '1px solid #ccc',
             borderRadius: '6px',
             marginBottom: '15px',
-            resize: 'vertical',
+            resize: 'none',
             backgroundColor: 'rgba(255,255,255,0.8)',
             fontSize: '14px',
             boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.05)',
             fontFamily: 'inherit',
             lineHeight: '1.5',
-            color: '#2c3e50'
+            color: '#2c3e50',
+            overflowY: 'auto'
           }}
           placeholder="Share your thoughts, ideas, or any issues you've found. Screenshots of problems are very helpful!"
         />
@@ -264,6 +267,30 @@ const FeedbackForm = ({
           <FaPaperPlane size={14} />
           Submit Feedback
         </button>
+        
+        {feedbackSubmitted && (
+          <div style={{ 
+            marginTop: '15px', 
+            padding: '8px 12px',
+            backgroundColor: '#e6f7e6',
+            border: '1px solid #c3e6cb',
+            borderRadius: '4px',
+            color: '#155724',
+            fontSize: '14px',
+            textAlign: 'center',
+            boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
+            width: '100%',
+            maxWidth: '300px'
+          }}>
+            <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-.997-6l7.07-7.071-1.414-1.414-5.656 5.657-2.829-2.829-1.414 1.414L11.003 16z" 
+                  fill="currentColor"/>
+              </svg>
+              Feedback submitted successfully!
+            </span>
+          </div>
+        )}
       </div>
     </div>
   );
