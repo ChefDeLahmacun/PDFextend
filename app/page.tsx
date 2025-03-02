@@ -575,7 +575,10 @@ export default function Home() {
   };
 
   return (
-    <Layout feedbackSectionNeedsExtraHeight={feedbackSectionNeedsExtraHeight}>
+    <Layout 
+      feedbackSectionNeedsExtraHeight={feedbackSectionNeedsExtraHeight}
+      feedbackSubmitted={feedbackSubmitted}
+    >
       <div 
         style={{ 
           width: '100%',

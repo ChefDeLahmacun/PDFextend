@@ -31,8 +31,8 @@ const FeedbackForm = ({
   return (
     <div style={{
       width: '100%',
-      height: feedbackSectionNeedsExtraHeight || feedbackSubmitted ? '500px' : '400px',
-      padding: '15px 20px 90px 20px',
+      height: feedbackSectionNeedsExtraHeight ? '500px' : (feedbackSubmitted ? '350px' : '400px'),
+      padding: feedbackSubmitted ? '15px 20px 50px 20px' : '15px 20px 90px 20px',
       boxSizing: 'border-box',
       display: 'flex',
       flexDirection: 'column',
@@ -49,7 +49,7 @@ const FeedbackForm = ({
         position: 'relative',
         zIndex: 3,
         paddingTop: '5px',
-        paddingBottom: '50px'
+        paddingBottom: feedbackSubmitted ? '30px' : '50px'
       }}>
         <h2 style={{ 
           fontSize: '22px', 
