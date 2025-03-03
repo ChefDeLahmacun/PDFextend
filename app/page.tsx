@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect, useLayoutEffect, useContext } from 'react';
-import { PDFDocument, rgb } from 'pdf-lib';
+import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 import Image from 'next/image';
 import Layout, { GreenContentRefContext } from './components/Layout';
 import Header from './components/Header';
@@ -554,19 +554,26 @@ export default function Home() {
   
   // Submit feedback
   const submitFeedback = () => {
-    // In a real application, you would send the feedback and images to a server
-    // For now, we'll just show a success message and clear the form
+    if (!feedback.trim()) {
+      alert('Please enter some feedback before submitting.');
+      return;
+    }
+    
+    // The form submission is now handled by the event listener in FeedbackForm
+    // We just need to handle the UI updates here
+    
+    // Clear form and show success message
     setFeedback('');
     setFeedbackImages([]);
     setFeedbackImagePreviews([]);
-    // Keep extra height while success message is shown
-    setFeedbackSectionNeedsExtraHeight(true);
+    
+    // Don't need extra height for success message
+    setFeedbackSectionNeedsExtraHeight(false);
     setFeedbackSubmitted(true);
     
-    // Reset the feedback submitted state and extra height after 5 seconds
+    // Reset the feedback submitted state after 5 seconds
     setTimeout(() => {
       setFeedbackSubmitted(false);
-      setFeedbackSectionNeedsExtraHeight(false);
     }, 5000);
     
     if (feedbackImageRef.current) {
