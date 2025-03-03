@@ -31,6 +31,24 @@ const DonationsBox = () => {
   const [buttonKey, setButtonKey] = useState<number>(0);
   // Add a ref to track the last clicked button
   const lastClickedButtonRef = useRef<string | null>(null);
+  // Add currency state
+  const [selectedCurrency, setSelectedCurrency] = useState('GBP');
+  
+  // Currency options with symbols
+  const currencies = [
+    { code: 'GBP', symbol: '£', name: 'British Pound' },
+    { code: 'USD', symbol: '$', name: 'US Dollar' },
+    { code: 'EUR', symbol: '€', name: 'Euro' },
+    { code: 'CAD', symbol: 'C$', name: 'Canadian Dollar' },
+    { code: 'AUD', symbol: 'A$', name: 'Australian Dollar' },
+    { code: 'JPY', symbol: '¥', name: 'Japanese Yen' }
+  ];
+  
+  // Get current currency symbol
+  const getCurrencySymbol = () => {
+    const currency = currencies.find(c => c.code === selectedCurrency);
+    return currency ? currency.symbol : '£';
+  };
 
   const initPayPalButton = () => {
     if (!window.paypal || !buttonContainerRef.current) return;
@@ -57,10 +75,22 @@ const DonationsBox = () => {
             purchase_units: [{
               amount: {
                 value: formattedAmount,
-                currency_code: 'GBP'
+                currency_code: selectedCurrency // Use selected currency
               },
-              description: 'Donation to SpaceMyPDF'
-            }]
+              description: 'Donation to SpaceMyPDF',
+              // Add shipping preference to indicate no shipping is required
+              shipping_preference: 'NO_SHIPPING'
+            }],
+            // Add application context to specify this is a donation
+            application_context: {
+              shipping_preference: 'NO_SHIPPING',
+              user_action: 'PAY_NOW',
+              brand_name: 'SpaceMyPDF',
+              landing_page: 'BILLING',
+              payment_method: {
+                payee_preferred: 'IMMEDIATE_PAYMENT_REQUIRED'
+              }
+            }
           });
         },
         
@@ -200,12 +230,21 @@ const DonationsBox = () => {
     return num.toFixed(2);
   };
 
-  // Effect to initialize the PayPal button when the component mounts or when buttonKey changes
+  // Handle currency change
+  const handleCurrencyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newCurrency = e.target.value;
+    setSelectedCurrency(newCurrency);
+    
+    // Force re-render of PayPal button with new currency
+    setButtonKey(prevKey => prevKey + 1);
+  };
+
+  // Effect to initialize the PayPal button when the component mounts or when buttonKey or selectedCurrency changes
   useEffect(() => {
     if (window.paypal) {
       initPayPalButton();
     }
-  }, [buttonKey]); // Add buttonKey as a dependency
+  }, [buttonKey, selectedCurrency]); // Add selectedCurrency as a dependency
 
   // Add an effect to monitor the card section state
   useEffect(() => {
@@ -265,7 +304,7 @@ const DonationsBox = () => {
       transition: 'min-height 0.3s ease-in-out'
     }}>
       <Script 
-        src={`https://www.paypal.com/sdk/js?client-id=${process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID}&currency=GBP&locale=en_GB&intent=capture&components=buttons,funding-eligibility`}
+        src={`https://www.paypal.com/sdk/js?client-id=${process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID}&currency=${selectedCurrency}&locale=en_GB&intent=capture&components=buttons,funding-eligibility&commit=true`}
         strategy="afterInteractive"
         onLoad={() => {
           console.log('PayPal script loaded');
@@ -274,6 +313,7 @@ const DonationsBox = () => {
         onError={(e) => {
           console.error('Error loading PayPal script:', e);
         }}
+        key={selectedCurrency} // Add key to force script reload when currency changes
       />
       
       <h2 style={{
@@ -339,6 +379,46 @@ const DonationsBox = () => {
           borderRadius: '8px',
           border: '1px solid rgba(0, 0, 0, 0.1)'
         }}>
+          {/* Add currency selector */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
+            marginBottom: '10px',
+            width: '100%',
+            justifyContent: 'center'
+          }}>
+            <label 
+              htmlFor="currencySelector"
+              style={{
+                fontSize: '16px',
+                color: '#333',
+                fontWeight: '600'
+              }}
+            >
+              Currency:
+            </label>
+            <select
+              id="currencySelector"
+              value={selectedCurrency}
+              onChange={handleCurrencyChange}
+              style={{
+                padding: '6px 10px',
+                fontSize: '14px',
+                border: '1px solid #ccc',
+                borderRadius: '4px',
+                backgroundColor: 'white',
+                cursor: 'pointer'
+              }}
+            >
+              {currencies.map(currency => (
+                <option key={currency.code} value={currency.code}>
+                  {currency.code} ({currency.symbol}) - {currency.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          
           <label 
             htmlFor="donationAmount"
             style={{
@@ -368,7 +448,7 @@ const DonationsBox = () => {
               fontSize: '18px',
               color: '#333',
               fontWeight: '500'
-            }}>£</span>
+            }}>{getCurrencySymbol()}</span>
             <input
               id="donationAmount"
               type="number"
@@ -399,7 +479,7 @@ const DonationsBox = () => {
             margin: '2px 0 0 0',
             fontStyle: 'italic'
           }}>
-            Min: £0.01 - Max: £10,000
+            Min: {getCurrencySymbol()}0.01 - Max: {getCurrencySymbol()}10,000
           </p>
         </div>
 
