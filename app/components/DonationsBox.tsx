@@ -24,6 +24,13 @@ const DonationsBox = () => {
   const buttonContainerRef = useRef<HTMLDivElement>(null);
   const buttonInstance = useRef<any>(null);
   const [donationAmount, setDonationAmount] = useState('1.00');
+  const currentOrderRef = useRef<any>(null);
+  // Add a timeout ref for debouncing
+  const updateTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  // Add a key state to force re-render of the PayPal button container
+  const [buttonKey, setButtonKey] = useState<number>(0);
+  // Add a ref to track the last clicked button
+  const lastClickedButtonRef = useRef<string | null>(null);
 
   const initPayPalButton = () => {
     if (!window.paypal || !buttonContainerRef.current) return;
@@ -44,10 +51,12 @@ const DonationsBox = () => {
         },
         
         createOrder: (_data: any, actions: any) => {
+          // Use the current donation amount
+          const formattedAmount = formatAmount(donationAmount);
           return actions.order.create({
             purchase_units: [{
               amount: {
-                value: donationAmount,
+                value: formattedAmount,
                 currency_code: 'GBP'
               },
               description: 'Donation to SpaceMyPDF'
@@ -77,7 +86,11 @@ const DonationsBox = () => {
                   if (mutation.type === 'attributes' || mutation.type === 'childList') {
                     // Check if card payment method is selected by looking for active card button
                     const cardButton = document.querySelector('[data-funding-source="card"].paypal-button-active');
-                    setIsCardSelected(!!cardButton);
+                    const cardForm = document.querySelector('.paypal-card-form');
+                    
+                    const isNowCardSelected = !!(cardButton || cardForm);
+                    
+                    setIsCardSelected(isNowCardSelected);
                   }
                 });
               });
@@ -94,7 +107,23 @@ const DonationsBox = () => {
           });
         },
 
-        onClick: () => {
+        onClick: (data: any) => {
+          // Store which button was clicked
+          if (data && data.fundingSource) {
+            lastClickedButtonRef.current = data.fundingSource;
+          }
+          
+          // Update the order amount when the button is clicked
+          if (validateAmount(donationAmount)) {
+            // Format the amount
+            const formatted = formatAmount(donationAmount);
+            if (donationAmount !== formatted) {
+              setDonationAmount(formatted);
+            }
+          } else {
+            setDonationAmount('1.00');
+          }
+          
           setIsExpanded(true);
         },
 
@@ -113,10 +142,51 @@ const DonationsBox = () => {
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
+    
+    // Don't format the amount during typing, just validate and set the raw value
+    if (value === '') {
+      setDonationAmount('');
+    } else {
+      // Only validate the format but don't convert to fixed decimal during typing
+      const isValid = /^\d*\.?\d{0,2}$/.test(value);
+      if (isValid) {
+        setDonationAmount(value);
+        
+        // If the value is valid, update the PayPal button
+        if (validateAmount(value)) {
+          // Clear any existing timeout
+          if (updateTimeoutRef.current) {
+            clearTimeout(updateTimeoutRef.current);
+          }
+          
+          // Set a new timeout to update the button after typing stops
+          updateTimeoutRef.current = setTimeout(() => {
+            // Increment the key to force a re-render of the PayPal button container
+            setButtonKey(prevKey => prevKey + 1);
+          }, 500); // 500ms debounce
+        }
+      }
+    }
+  };
+
+  const handleAmountBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    const value = e.target.value;
     if (value === '' || !validateAmount(value)) {
       setDonationAmount('1.00');
+      
+      // Force re-render with default amount
+      setButtonKey(prevKey => prevKey + 1);
     } else {
-      setDonationAmount(formatAmount(value));
+      // Format the amount with 2 decimal places when the field loses focus
+      const formattedAmount = formatAmount(value);
+      
+      // Only update if the amount actually changed
+      if (formattedAmount !== donationAmount) {
+        setDonationAmount(formattedAmount);
+        
+        // Force re-render with formatted amount
+        setButtonKey(prevKey => prevKey + 1);
+      }
     }
   };
 
@@ -130,10 +200,50 @@ const DonationsBox = () => {
     return num.toFixed(2);
   };
 
+  // Effect to initialize the PayPal button when the component mounts or when buttonKey changes
   useEffect(() => {
     if (window.paypal) {
       initPayPalButton();
     }
+  }, [buttonKey]); // Add buttonKey as a dependency
+
+  // Add an effect to monitor the card section state
+  useEffect(() => {
+    // Function to check if the card section is open
+    const checkCardSectionOpen = () => {
+      const cardSection = document.querySelector('.paypal-card-form');
+      const cardButton = document.querySelector('[data-funding-source="card"].paypal-button-active');
+      
+      // Update the isCardSelected state based on what we find in the DOM
+      setIsCardSelected(!!(cardSection || cardButton));
+    };
+
+    // Set up a mutation observer to watch for changes in the button container
+    if (buttonContainerRef.current) {
+      const observer = new MutationObserver(() => {
+        checkCardSectionOpen();
+      });
+      
+      observer.observe(buttonContainerRef.current, { 
+        childList: true, 
+        subtree: true,
+        attributes: true
+      });
+      
+      // Initial check
+      checkCardSectionOpen();
+      
+      return () => observer.disconnect();
+    }
+  }, [isPayPalLoaded]);
+
+  // Clean up the timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (updateTimeoutRef.current) {
+        clearTimeout(updateTimeoutRef.current);
+      }
+    };
   }, []);
 
   return (
@@ -280,14 +390,7 @@ const DonationsBox = () => {
                 boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.1)',
                 transition: 'all 0.2s ease'
               }}
-              onBlur={(e) => {
-                const value = e.target.value;
-                if (value === '' || !validateAmount(value)) {
-                  setDonationAmount('1.00');
-                } else {
-                  setDonationAmount(formatAmount(value));
-                }
-              }}
+              onBlur={handleAmountBlur}
             />
           </div>
           <p style={{
@@ -301,6 +404,7 @@ const DonationsBox = () => {
         </div>
 
         <div 
+          key={buttonKey}
           ref={buttonContainerRef}
           style={{ 
             width: '300px',
