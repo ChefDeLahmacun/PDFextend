@@ -9,6 +9,8 @@ import Features from './components/Features';
 import Controls from './components/Controls';
 import Preview from './components/Preview';
 import FeedbackForm from './components/FeedbackForm';
+import WhiteBox from './components/WhiteBox';
+import DonationsBox from './components/DonationsBox';
 
 export default function Home() {
   const [file, setFile] = useState<File | null>(null);
@@ -645,18 +647,22 @@ export default function Home() {
           </div>
         </GreenContentWrapper>
         
-        <FeedbackForm 
-          feedback={feedback}
-          setFeedback={setFeedback}
-          feedbackImages={feedbackImages}
-          feedbackImagePreviews={feedbackImagePreviews}
-          handleFeedbackImageUpload={handleFeedbackImageUpload}
-          clearAllFeedbackImages={clearAllFeedbackImages}
-          removeFeedbackImage={removeFeedbackImage}
-          submitFeedback={submitFeedback}
-          feedbackSectionNeedsExtraHeight={feedbackSectionNeedsExtraHeight}
-          feedbackSubmitted={feedbackSubmitted}
-        />
+        <div style={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
+          <FeedbackForm 
+            feedback={feedback}
+            setFeedback={setFeedback}
+            feedbackImages={feedbackImages}
+            feedbackImagePreviews={feedbackImagePreviews}
+            handleFeedbackImageUpload={handleFeedbackImageUpload}
+            clearAllFeedbackImages={clearAllFeedbackImages}
+            removeFeedbackImage={removeFeedbackImage}
+            submitFeedback={submitFeedback}
+            feedbackSectionNeedsExtraHeight={feedbackSectionNeedsExtraHeight}
+            feedbackSubmitted={feedbackSubmitted}
+          />
+          <WhiteBox />
+          <DonationsBox />
+        </div>
       </div>
     </Layout>
   );
