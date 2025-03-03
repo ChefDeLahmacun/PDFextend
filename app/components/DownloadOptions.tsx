@@ -86,7 +86,6 @@ const DownloadOptions = ({
         >
           {downloadIsProcessing ? (
             <>
-              <span className="spinner"></span>
               Processing...
             </>
           ) : (

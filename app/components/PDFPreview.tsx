@@ -17,10 +17,15 @@ const PDFPreview = ({ pdfPreviewUrl, isProcessing }: PDFPreviewProps) => {
           alignItems: 'center', 
           height: '300px', 
           border: '1px solid #ddd',
-          borderRadius: '4px'
+          borderRadius: '4px',
+          backgroundColor: '#f9f9f9'
         }}>
-          <div className="spinner" style={{ marginRight: '10px' }}></div>
-          <p>Processing PDF...</p>
+          <div className="spinner" style={{ 
+            marginRight: '10px',
+            border: '3px solid rgba(0, 0, 0, 0.1)',
+            borderTopColor: '#4CAF50'
+          }}></div>
+          <p style={{ fontWeight: '500' }}>Processing PDF...</p>
         </div>
       ) : pdfPreviewUrl ? (
         <div>

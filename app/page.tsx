@@ -77,6 +77,7 @@ export default function Home() {
       return;
     }
     
+    setIsProcessing(true); // Set processing state immediately when file is uploaded
     setFile(uploadedFile);
     setBaseFileName(uploadedFile.name.replace('.pdf', ''));
     updateOutputFileName(uploadedFile.name.replace('.pdf', ''), includeWithNotes);
@@ -90,6 +91,7 @@ export default function Home() {
     setBaseFileName('');
     setOutputFileName('');
     setSuccessMessage('');
+    setIsProcessing(false); // Clear processing state when file is cleared
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -271,9 +273,11 @@ export default function Home() {
           original: originalPreviewUrl,
           modified: modifiedPreviewUrl
         });
+        
+        // Set isProcessing to false immediately after setting preview URLs
+        setIsProcessing(false);
       } catch (error) {
         console.error('Error generating preview:', error);
-      } finally {
         setIsProcessing(false);
       }
     };

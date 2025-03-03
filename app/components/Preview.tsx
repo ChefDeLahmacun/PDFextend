@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import './Spinner.css';
 
 interface PreviewProps {
   file: File | null;
@@ -62,42 +63,60 @@ const Preview: React.FC<PreviewProps> = ({ file, isProcessing, pdfPreviewUrl }) 
             backgroundColor: 'white'
           }}>
             {file ? (
-              <div style={{ height: '100%', overflow: 'auto' }}>
-                {isProcessing ? (
-                  <div style={{ 
-                    width: '100%', 
-                    height: '100%', 
-                    backgroundColor: 'white', 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    justifyContent: 'center' 
-                  }}>
-                    <p>Processing PDF...</p>
-                  </div>
-                ) : (
-                  <div style={{ width: '100%', height: '100%', backgroundColor: 'white', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                    {pdfPreviewUrl ? (
-                      <iframe 
-                        src={`${typeof pdfPreviewUrl === 'object' ? pdfPreviewUrl.original : pdfPreviewUrl}#toolbar=0&navpanes=0&scrollbar=0`}
-                        style={{ 
-                          width: '100%', 
-                          height: '100%',
-                          border: 'none'
-                        }} 
-                        title="PDF Preview"
-                      />
-                    ) : (
-                      <div style={{ 
-                        display: 'flex', 
-                        alignItems: 'center', 
-                        justifyContent: 'center', 
-                        height: '100%' 
-                      }}>
-                        <p>PDF preview not available</p>
-                      </div>
-                    )}
-                  </div>
-                )}
+              <div style={{ height: '100%', overflow: 'auto', position: 'relative' }}>
+                <div style={{ 
+                  width: '100%', 
+                  height: '100%', 
+                  backgroundColor: 'white', 
+                  display: 'flex', 
+                  justifyContent: 'center', 
+                  alignItems: 'center',
+                  position: 'relative'
+                }}>
+                  {isProcessing ? (
+                    <div 
+                      key={`processing-${Date.now()}`}
+                      style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: '#f9f9f9',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexDirection: 'row',
+                        gap: '15px',
+                        zIndex: 5
+                      }}
+                    >
+                      <div className="spinner"></div>
+                      <p className="processing-text">Processing PDF...</p>
+                    </div>
+                  ) : null}
+                  
+                  {pdfPreviewUrl ? (
+                    <iframe 
+                      src={`${typeof pdfPreviewUrl === 'object' ? pdfPreviewUrl.original : pdfPreviewUrl}#toolbar=0&navpanes=0&scrollbar=0`}
+                      style={{ 
+                        width: '100%', 
+                        height: '100%',
+                        border: 'none'
+                      }} 
+                      title="PDF Preview"
+                    />
+                  ) : (
+                    <div style={{ 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'center', 
+                      height: '100%' 
+                    }}>
+                      <p>PDF preview not available</p>
+                    </div>
+                  )}
+                </div>
               </div>
             ) : (
               <div style={{ 
@@ -124,42 +143,60 @@ const Preview: React.FC<PreviewProps> = ({ file, isProcessing, pdfPreviewUrl }) 
             backgroundColor: 'white'
           }}>
             {file ? (
-              <div style={{ height: '100%', overflow: 'auto' }}>
-                {isProcessing ? (
-                  <div style={{ 
-                    width: '100%', 
-                    height: '100%', 
-                    backgroundColor: 'white', 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    justifyContent: 'center' 
-                  }}>
-                    <p>Processing PDF...</p>
-                  </div>
-                ) : (
-                  <div style={{ width: '100%', height: '100%', backgroundColor: 'white', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                    {pdfPreviewUrl ? (
-                      <iframe 
-                        src={`${typeof pdfPreviewUrl === 'object' ? pdfPreviewUrl.modified : pdfPreviewUrl}#toolbar=0&navpanes=0&scrollbar=0`}
-                        style={{ 
-                          width: '100%', 
-                          height: '100%',
-                          border: 'none'
-                        }} 
-                        title="PDF Preview with Notes"
-                      />
-                    ) : (
-                      <div style={{ 
-                        display: 'flex', 
-                        alignItems: 'center', 
-                        justifyContent: 'center', 
-                        height: '100%' 
-                      }}>
-                        <p>PDF preview not available</p>
-                      </div>
-                    )}
-                  </div>
-                )}
+              <div style={{ height: '100%', overflow: 'auto', position: 'relative' }}>
+                <div style={{ 
+                  width: '100%', 
+                  height: '100%', 
+                  backgroundColor: 'white', 
+                  display: 'flex', 
+                  justifyContent: 'center', 
+                  alignItems: 'center',
+                  position: 'relative'
+                }}>
+                  {isProcessing ? (
+                    <div 
+                      key={`processing-${Date.now()}`}
+                      style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: '#f9f9f9',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexDirection: 'row',
+                        gap: '15px',
+                        zIndex: 5
+                      }}
+                    >
+                      <div className="spinner"></div>
+                      <p className="processing-text">Processing PDF...</p>
+                    </div>
+                  ) : null}
+                  
+                  {pdfPreviewUrl ? (
+                    <iframe 
+                      src={`${typeof pdfPreviewUrl === 'object' ? pdfPreviewUrl.modified : pdfPreviewUrl}#toolbar=0&navpanes=0&scrollbar=0`}
+                      style={{ 
+                        width: '100%', 
+                        height: '100%',
+                        border: 'none'
+                      }} 
+                      title="PDF Preview with Notes"
+                    />
+                  ) : (
+                    <div style={{ 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'center', 
+                      height: '100%' 
+                    }}>
+                      <p>PDF preview not available</p>
+                    </div>
+                  )}
+                </div>
               </div>
             ) : (
               <div style={{ 
@@ -185,4 +222,4 @@ const Preview: React.FC<PreviewProps> = ({ file, isProcessing, pdfPreviewUrl }) 
   );
 };
 
-export default Preview; 
+export default Preview;

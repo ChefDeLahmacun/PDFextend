@@ -1,36 +1,27 @@
-import { Inter } from 'next/font/google'
-import localFont from 'next/font/local'
+import { Inter, Roboto } from 'next/font/google'
 
-// Configure Inter font with optional fallback
+// Configure the font with subsets and display settings
 export const inter = Inter({
   subsets: ['latin'],
   display: 'swap',
-  fallback: ['system-ui', 'Arial', 'sans-serif'],
-  preload: true,
-  // Adjust for SSL certificate issues
-  adjustFontFallback: true,
-  variable: '--font-inter',
+  preload: false, // Don't preload to avoid SSL issues
+  fallback: [
+    'system-ui',
+    '-apple-system',
+    'BlinkMacSystemFont',
+    'Segoe UI',
+    'Roboto',
+    'Helvetica Neue',
+    'Arial',
+    'sans-serif'
+  ],
 })
 
-// Optional: Configure a local fallback font if Google Fonts fails
-export const interLocal = localFont({
-  src: [
-    {
-      path: '../public/fonts/Inter-Regular.woff2',
-      weight: '400',
-      style: 'normal',
-    },
-    {
-      path: '../public/fonts/Inter-Medium.woff2',
-      weight: '500',
-      style: 'normal',
-    },
-    {
-      path: '../public/fonts/Inter-Bold.woff2',
-      weight: '700',
-      style: 'normal',
-    },
-  ],
+// Backup font in case Inter fails to load
+export const roboto = Roboto({
+  weight: ['400', '500', '700'],
+  subsets: ['latin'],
   display: 'swap',
-  variable: '--font-inter-local',
+  preload: false,
+  fallback: ['system-ui', 'Arial', 'sans-serif'],
 }) 
