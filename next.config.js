@@ -4,6 +4,10 @@ const nextConfig = {
   experimental: {
     serverComponentsExternalPackages: ['pdf-lib'],
   },
+  optimizeFonts: true,
+  webpack: (config, { isServer, dev }) => {
+    return config;
+  },
 }
 
 module.exports = nextConfig 
