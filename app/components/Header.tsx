@@ -12,10 +12,13 @@ const Header: React.FC = () => {
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-      borderBottom: '1px solid #ddd',
-      boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+      borderBottom: '1px solid rgba(221, 221, 221, 0.5)',
+      boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
       padding: '10px 0',
-      boxSizing: 'border-box'
+      boxSizing: 'border-box',
+      background: 'linear-gradient(to right, #f0d6a7 0%, #edc077 50%, #f0d6a7 100%)',
+      position: 'relative',
+      zIndex: 10
     }}>
       {/* Header content */}
       <div style={{
@@ -24,23 +27,24 @@ const Header: React.FC = () => {
         gap: '15px'
       }}>
         <div style={{
-          width: '80px',
-          height: '80px',
-          backgroundColor: 'white',
+          width: '70px',
+          height: '70px',
+          background: 'linear-gradient(135deg, #ffffff 0%, #f5f5f5 100%)',
           borderRadius: '50%',
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
           overflow: 'hidden',
-          border: '1px solid #ddd',
+          border: '1px solid rgba(221, 221, 221, 0.7)',
           padding: '3px',
-          boxShadow: '0 3px 6px rgba(0,0,0,0.1)'
+          boxShadow: '0 4px 10px rgba(0,0,0,0.1)',
+          transition: 'all 0.3s ease'
         }}>
           <Image 
             src="/images/Logo.png"
             alt="Document Extender Logo"
-            width={70}
-            height={70}
+            width={60}
+            height={60}
             style={{
               borderRadius: '50%',
               objectFit: 'cover',
@@ -62,13 +66,14 @@ const Header: React.FC = () => {
             letterSpacing: '0.5px',
             display: 'flex',
             alignItems: 'center',
-            gap: '8px'
+            gap: '8px',
+            textShadow: '1px 1px 2px rgba(0,0,0,0.1)'
           }}>
             <span>SpaceMyPDF</span>
           </div>
           <div style={{
             fontSize: '14px',
-            color: '#555',
+            color: '#444',
             fontStyle: 'italic',
             marginTop: '2px'
           }}>

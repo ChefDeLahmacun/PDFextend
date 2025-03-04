@@ -359,13 +359,14 @@ const Controls: React.FC<ControlsProps> = ({
         
         <div style={{ marginBottom: '20px' }}>
           <p style={{ fontWeight: 'bold', marginBottom: '5px' }}>Output Filename</p>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <div style={{ 
               display: 'flex', 
               flex: 1,
               border: '1px solid black',
-              borderRadius: '3px 0 0 3px',
-              overflow: 'hidden'
+              borderRadius: '3px',
+              overflow: 'hidden',
+              height: '30px'
             }}>
               <input
                 type="text"
@@ -376,7 +377,9 @@ const Controls: React.FC<ControlsProps> = ({
                   padding: '5px',
                   border: 'none',
                   outline: 'none',
-                  minWidth: 0
+                  minWidth: 0,
+                  height: '100%',
+                  boxSizing: 'border-box'
                 }}
                 placeholder="Enter filename"
               />
@@ -385,7 +388,9 @@ const Controls: React.FC<ControlsProps> = ({
                 backgroundColor: '#f0f0f0', 
                 color: '#666',
                 borderLeft: '1px solid #ccc',
-                whiteSpace: 'nowrap'
+                whiteSpace: 'nowrap',
+                display: 'flex',
+                alignItems: 'center'
               }}>
                 {includeWithNotes ? '_with_notes.pdf' : '.pdf'}
               </span>
@@ -393,13 +398,18 @@ const Controls: React.FC<ControlsProps> = ({
             <button
               onClick={resetBaseFileName}
               style={{
-                padding: '5px 10px',
+                padding: '0 10px',
                 backgroundColor: 'white',
                 border: '1px solid black',
-                borderLeft: 'none',
-                borderRadius: '0 3px 3px 0',
+                borderRadius: '3px',
                 cursor: 'pointer',
-                whiteSpace: 'nowrap'
+                whiteSpace: 'nowrap',
+                height: '30px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxSizing: 'border-box',
+                fontSize: '14px'
               }}
             >
               Reset
@@ -455,6 +465,35 @@ const Controls: React.FC<ControlsProps> = ({
                 Specify where to save the document
               </label>
             </div>
+            
+            {!specifyLocation && (
+              <div style={{
+                width: '100%',
+                display: 'flex',
+                justifyContent: 'center',
+                marginBottom: '15px'
+              }}>
+                <div style={{
+                  fontSize: '12px',
+                  color: '#777',
+                  fontStyle: 'italic',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px',
+                  padding: '4px 8px',
+                  background: 'rgba(0, 0, 0, 0.03)',
+                  borderRadius: '4px',
+                  maxWidth: 'fit-content',
+                  whiteSpace: 'nowrap'
+                }}>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z" fill="#888"/>
+                  </svg>
+                  <span>File will be saved to your browser's default Downloads folder</span>
+                </div>
+              </div>
+            )}
             
             <div style={{ marginBottom: '20px' }}>
               <button

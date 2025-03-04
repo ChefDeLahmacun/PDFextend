@@ -102,13 +102,27 @@ const FeatureCard: React.FC<FeatureCardProps> = ({ icon, title, description }) =
       boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
       transition: 'transform 0.2s ease, box-shadow 0.2s ease',
       cursor: 'default',
-      minWidth: '200px'
+      minWidth: '200px',
+      display: 'flex',
+      flexDirection: 'column'
     }}>
-      <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
+      <div style={{ 
+        display: 'flex', 
+        alignItems: 'center', 
+        marginBottom: '12px',
+        height: '32px' 
+      }}>
         <div style={{ marginRight: '10px' }}>{icon}</div>
         <h3 style={{ margin: '0', fontSize: '18px', fontWeight: '600', color: '#2c3e50' }}>{title}</h3>
       </div>
-      <p style={{ margin: '0', fontSize: '14px', lineHeight: '1.4', color: '#34495e' }}>
+      <p style={{ 
+        margin: '0', 
+        fontSize: '14px', 
+        lineHeight: '1.4', 
+        color: '#34495e',
+        flex: 1,
+        paddingTop: '4px'
+      }}>
         {description}
       </p>
     </div>
