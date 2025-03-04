@@ -631,16 +631,8 @@ const DonationsBox = () => {
 
   // Add function to create a direct PayPal donation URL
   const getDirectPayPalUrl = () => {
-    // For sandbox testing, use a different URL
-    if (process.env.NODE_ENV === 'development') {
-      // In development, we're using the sandbox environment
-      const sandboxEmail = process.env.NEXT_PUBLIC_PAYPAL_SANDBOX_BUSINESS_EMAIL || 'sb-543y7w37766112@business.example.com';
-      console.log('Using sandbox business email for direct link:', sandboxEmail);
-      return `https://www.sandbox.paypal.com/donate?business=${encodeURIComponent(sandboxEmail)}&amount=${donationAmount}&currency_code=${selectedCurrency}&item_name=Donation%20to%20SpaceMyPDF%20(Test)`;
-    }
-    
-    // For production
-    const businessEmail = process.env.NEXT_PUBLIC_PAYPAL_BUSINESS_EMAIL || 'YourPayPalEmail@example.com';
+    // Always use production URL
+    const businessEmail = process.env.NEXT_PUBLIC_PAYPAL_BUSINESS_EMAIL || 'emrecanogullari@gmail.com';
     console.log('Using production business email for direct link:', businessEmail);
     return `https://www.paypal.com/donate?business=${encodeURIComponent(businessEmail)}&amount=${donationAmount}&currency_code=${selectedCurrency}&item_name=Donation%20to%20SpaceMyPDF`;
   };
@@ -876,7 +868,7 @@ const DonationsBox = () => {
       transition: 'min-height 0.3s ease-in-out'
     }}>
       <Script 
-        src={`https://www.paypal.com/sdk/js?client-id=${process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID}&currency=${selectedCurrency}&intent=capture&enable-funding=card&disable-funding=paylater,venmo&locale=en_GB&commit=true&vault=true`}
+        src={`https://www.paypal.com/sdk/js?client-id=${process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID}&currency=${selectedCurrency}&intent=capture&enable-funding=card&disable-funding=paylater&locale=en_GB&commit=true&vault=true`}
         strategy="afterInteractive"
         onLoad={() => {
           console.log('PayPal script loaded successfully');
@@ -925,21 +917,6 @@ const DonationsBox = () => {
       }}>
         Support SpaceMyPDF
       </h2>
-      
-      {process.env.NODE_ENV === 'development' && (
-        <div style={{
-          backgroundColor: '#f8d7da',
-          color: '#721c24',
-          padding: '8px 12px',
-          borderRadius: '4px',
-          marginBottom: '15px',
-          fontSize: '14px',
-          fontWeight: '500',
-          border: '1px solid #f5c6cb'
-        }}>
-          🧪 Test Mode Active - No real payments will be processed
-        </div>
-      )}
       
       {donationSuccess ? (
         <div style={{
@@ -997,30 +974,8 @@ const DonationsBox = () => {
           }}>
             Payment Method: {paymentMethod}
           </p>
-          {paymentMethod.includes('Card') && process.env.NODE_ENV === 'development' && (
-            <div style={{
-              fontSize: '13px',
-              color: '#666',
-              margin: '5px 0 0 0',
-              padding: '10px',
-              backgroundColor: 'rgba(255, 220, 220, 0.5)',
-              borderRadius: '4px',
-              width: '100%',
-              textAlign: 'left',
-              border: '1px solid #ffcccc'
-            }}>
-              <p style={{ fontWeight: 'bold', marginBottom: '5px', color: '#d63031' }}>Important Sandbox Testing Note:</p>
-              <ul style={{ margin: '0', paddingLeft: '20px' }}>
-                <li>Your card payment was <strong>successfully processed</strong> (Transaction ID: {transactionId})</li>
-                <li>However, in the sandbox environment, card payments <strong>will not appear</strong> in the personal account's transaction history</li>
-                <li>This is a <strong>known limitation</strong> of the PayPal sandbox for card payments</li>
-                <li>In production with real cards, payments will properly transfer funds to your account</li>
-                <li>For testing purposes, consider the payment successful since you received a valid Transaction ID</li>
-              </ul>
-            </div>
-          )}
           
-          {paymentMethod.includes('Card') && process.env.NODE_ENV !== 'development' && (
+          {paymentMethod.includes('Card') && (
             <div style={{
               fontSize: '13px',
               color: '#666',
