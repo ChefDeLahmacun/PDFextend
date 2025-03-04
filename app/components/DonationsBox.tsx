@@ -231,12 +231,8 @@ const DonationsBox = () => {
               
               // For card payments, log additional details
               if (isCardPayment || (order.payment_source && order.payment_source.card)) {
-                console.log('CARD PAYMENT SUCCESSFUL - IMPORTANT DETAILS:');
+                console.log('CARD PAYMENT SUCCESSFUL');
                 console.log('Transaction ID:', order.id);
-                console.log('Payment Status:', order.status);
-                console.log('Payment Source:', order.payment_source ? JSON.stringify(order.payment_source) : 'Not available');
-                console.log('Payer Details:', order.payer ? JSON.stringify(order.payer) : 'Not available');
-                console.log('Purchase Units:', order.purchase_units ? JSON.stringify(order.purchase_units) : 'Not available');
                 
                 // Log a special message for troubleshooting
                 console.log('NOTE: If this card payment is not appearing in your PayPal business account:');
@@ -272,12 +268,11 @@ const DonationsBox = () => {
                 }
               } catch (getOrderError) {
                 console.error('Could not get order details:', getOrderError);
-                throw captureError;
               }
             }
             
-            // More detailed logging of the completed order
-            console.log('Donation completed - Full order details:', JSON.stringify(order));
+            // Log completion but remove sensitive data
+            console.log('Donation completed successfully');
             
             // Detect payment method with more detail
             let paymentMethodUsed = 'PayPal';
@@ -894,7 +889,6 @@ const DonationsBox = () => {
         }}
         onError={(e) => {
           console.error('Error loading PayPal script:', e);
-          console.error('Client ID used:', process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID);
           setLoadingError(true);
           
           // Retry loading after a delay, up to 3 times
