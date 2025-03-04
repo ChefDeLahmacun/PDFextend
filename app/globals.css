@@ -27,10 +27,12 @@ body {
 /* Add a pseudo-element to ensure the green section is always visible at the correct position */
 body::after {
   content: '';
-  position: absolute;
+  position: fixed; /* Changed from absolute to fixed for better behavior when zoomed out */
   top: 370px; /* Default position for the green section */
-  left: 0;
+  left: 50%;
+  transform: translateX(-50%); /* Center the element */
   width: 100%;
+  max-width: 1560px; /* Match the max-width of the main container */
   height: 950px; /* Limit height to only cover the preview section */
   background-color: var(--green-section-color); /* This will be the green color for the preview section */
   z-index: -1;
@@ -41,10 +43,12 @@ body::after {
 /* Add another pseudo-element for the bottom section with the side column color */
 body::before {
   content: '';
-  position: absolute;
+  position: fixed; /* Changed from absolute to fixed for better behavior when zoomed out */
   top: 1320px; /* Position after the green section */
-  left: 0;
+  left: 50%;
+  transform: translateX(-50%); /* Center the element */
   width: 100%;
+  max-width: 1560px; /* Match the max-width of the main container */
   height: 100vh;
   background-color: #f2c4aa; /* Match the side columns */
   z-index: -2;

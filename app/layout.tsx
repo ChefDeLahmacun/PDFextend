@@ -22,10 +22,12 @@ export default function RootLayout({
         <style dangerouslySetInnerHTML={{ __html: `
           /* Ensure bottom section is always visible */
           .bottom-section-placeholder {
-            position: absolute;
+            position: fixed; /* Changed from absolute to fixed for better behavior when zoomed out */
             top: 370px; /* Default position - will be covered by actual content */
-            left: 0;
+            left: 50%;
+            transform: translateX(-50%); /* Center the element */
             width: 100%;
+            max-width: 1560px; /* Match the max-width of the main container */
             height: 950px; /* Match minGreenSectionHeight */
             background-color: #c7edd4; /* Original green color for the preview section */
             z-index: 0;

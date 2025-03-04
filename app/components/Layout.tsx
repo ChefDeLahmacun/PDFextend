@@ -87,85 +87,93 @@ const Layout = ({ children, feedbackSectionNeedsExtraHeight, feedbackSubmitted =
         overflow: 'visible',
         backgroundColor: '#f2c4aa',
         border: 'none',
-        outline: 'none'
+        outline: 'none',
+        display: 'flex',
+        justifyContent: 'center' // Center the content horizontally
       }}>
-        {/* Background color sections */}
-        <div style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: headerHeight,
-          backgroundColor: '#edc077',
-          zIndex: 0
-        }}></div>
-        
-        <div style={{
-          position: 'absolute',
-          top: headerHeight,
-          left: 0,
-          width: '100%',
-          height: featuresHeight,
-          backgroundColor: '#dae1f0',
-          zIndex: 0
-        }}></div>
-        
-        {/* Green section with dynamic height */}
-        <div id="greenSection" style={{
-          position: 'absolute',
-          top: `calc(${headerHeight} + ${featuresHeight})`,
-          left: 0,
-          width: '100%',
-          height: greenSectionHeight,
-          backgroundColor: '#c7edd4', /* Original green color for the preview section */
-          zIndex: 0
-        }}></div>
-        
-        <div style={{
-          position: 'absolute',
-          top: `calc(${headerHeight} + ${featuresHeight} + ${greenSectionHeight})`,
-          left: sideBoxWidth,
-          width: `calc(100% - ${parseInt(sideBoxWidth) * 2}px)`,
-          height: feedbackHeight,
-          backgroundColor: '#c7caed',
-          zIndex: 2,
-          borderBottomLeftRadius: '30px',
-          borderBottomRightRadius: '30px'
-        }}></div>
-        
-        {/* Left side box */}
-        <div style={{
-          backgroundColor: '#f2c4aa',
-          width: sideBoxWidth,
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          bottom: 0,
-          zIndex: 1
-        }}></div>
-        
-        {/* Right side box */}
-        <div style={{
-          backgroundColor: '#f2c4aa',
-          width: sideBoxWidth,
-          position: 'absolute',
-          top: 0,
-          right: 0,
-          bottom: 0,
-          zIndex: 1
-        }}></div>
-        
-        {/* Main content */}
         <div style={{
           position: 'relative',
-          width: `calc(100% - ${parseInt(sideBoxWidth) * 2}px)`,
-          maxWidth: '1200px',
-          margin: '0 auto',
-          marginLeft: sideBoxWidth,
-          paddingTop: '0',
-          zIndex: 3
+          width: '100%',
+          maxWidth: '1560px', // Constrain the maximum width
+          margin: '0 auto'
         }}>
-          {children}
+          {/* Background color sections */}
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: headerHeight,
+            backgroundColor: '#edc077',
+            zIndex: 0
+          }}></div>
+          
+          <div style={{
+            position: 'absolute',
+            top: headerHeight,
+            left: 0,
+            width: '100%',
+            height: featuresHeight,
+            backgroundColor: '#dae1f0',
+            zIndex: 0
+          }}></div>
+          
+          {/* Green section with dynamic height */}
+          <div id="greenSection" style={{
+            position: 'absolute',
+            top: `calc(${headerHeight} + ${featuresHeight})`,
+            left: 0,
+            width: '100%',
+            height: greenSectionHeight,
+            backgroundColor: '#c7edd4', /* Original green color for the preview section */
+            zIndex: 0
+          }}></div>
+          
+          <div style={{
+            position: 'absolute',
+            top: `calc(${headerHeight} + ${featuresHeight} + ${greenSectionHeight})`,
+            left: sideBoxWidth,
+            width: `calc(100% - ${parseInt(sideBoxWidth) * 2}px)`,
+            height: feedbackHeight,
+            backgroundColor: '#c7caed',
+            zIndex: 2,
+            borderBottomLeftRadius: '30px',
+            borderBottomRightRadius: '30px'
+          }}></div>
+          
+          {/* Left side box */}
+          <div style={{
+            backgroundColor: '#f2c4aa',
+            width: sideBoxWidth,
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            bottom: 0,
+            zIndex: 1
+          }}></div>
+          
+          {/* Right side box */}
+          <div style={{
+            backgroundColor: '#f2c4aa',
+            width: sideBoxWidth,
+            position: 'absolute',
+            top: 0,
+            right: 0,
+            bottom: 0,
+            zIndex: 1
+          }}></div>
+          
+          {/* Main content */}
+          <div style={{
+            position: 'relative',
+            width: `calc(100% - ${parseInt(sideBoxWidth) * 2}px)`,
+            maxWidth: '1200px',
+            margin: '0 auto',
+            paddingTop: '0',
+            zIndex: 3
+          }}>
+            {children}
+          </div>
         </div>
       </div>
     </GreenContentRefContext.Provider>
