@@ -132,48 +132,49 @@ const FeedbackForm = ({
       }
       
       // Now, submit to FormSubmit.co using a hidden form
-      if (!hiddenFormRef.current) {
+      const hiddenForm = hiddenFormRef.current;
+      if (!hiddenForm) {
         throw new Error('Form reference not available');
       }
       
       // Clear any existing inputs
-      while (hiddenFormRef.current.firstChild) {
-        hiddenFormRef.current.removeChild(hiddenFormRef.current.firstChild);
+      while (hiddenForm.firstChild) {
+        hiddenForm.removeChild(hiddenForm.firstChild);
       }
       
       // Set form attributes
-      hiddenFormRef.current.action = 'https://formsubmit.co/code.canogullari@gmail.com';
-      hiddenFormRef.current.method = 'POST';
-      hiddenFormRef.current.enctype = 'multipart/form-data';
-      hiddenFormRef.current.target = 'hidden_feedback_iframe';
+      hiddenForm.action = 'https://formsubmit.co/code.canogullari@gmail.com';
+      hiddenForm.method = 'POST';
+      hiddenForm.enctype = 'multipart/form-data';
+      hiddenForm.target = 'hidden_feedback_iframe';
       
       // Add message field
       const messageInput = document.createElement('input');
       messageInput.type = 'hidden';
       messageInput.name = 'message';
       messageInput.value = feedback;
-      hiddenFormRef.current.appendChild(messageInput);
+      hiddenForm.appendChild(messageInput);
       
       // Add subject field
       const subjectInput = document.createElement('input');
       subjectInput.type = 'hidden';
       subjectInput.name = '_subject';
       subjectInput.value = `PDFextend Feedback - ${new Date().toLocaleString()}`;
-      hiddenFormRef.current.appendChild(subjectInput);
+      hiddenForm.appendChild(subjectInput);
       
       // Disable captcha
       const captchaInput = document.createElement('input');
       captchaInput.type = 'hidden';
       captchaInput.name = '_captcha';
       captchaInput.value = 'false';
-      hiddenFormRef.current.appendChild(captchaInput);
+      hiddenForm.appendChild(captchaInput);
       
       // Use table template
       const templateInput = document.createElement('input');
       templateInput.type = 'hidden';
       templateInput.name = '_template';
       templateInput.value = 'table';
-      hiddenFormRef.current.appendChild(templateInput);
+      hiddenForm.appendChild(templateInput);
       
       // Add all images
       feedbackImages.forEach((file, index) => {
@@ -187,11 +188,11 @@ const FeedbackForm = ({
         dataTransfer.items.add(file);
         fileInput.files = dataTransfer.files;
         
-        hiddenFormRef.current.appendChild(fileInput);
+        hiddenForm.appendChild(fileInput);
       });
       
       // Submit the form
-      hiddenFormRef.current.submit();
+      hiddenForm.submit();
       
       // Set success status
       setSubmissionStatus('success');
