@@ -1,11 +1,26 @@
 import { NextResponse } from 'next/server';
-import nodemailer from 'nodemailer';
+
+// Store feedback in memory for development purposes
+// In production, you would use a database or external service
+const feedbackStore: {
+  id: string;
+  feedback: string;
+  timestamp: string;
+  attachments: { name: string; size: number; type: string }[];
+}[] = [];
 
 export async function POST(request: Request) {
   try {
     // Parse the request body
     const formData = await request.formData();
     const feedback = formData.get('feedback')?.toString() || '';
+    
+    if (!feedback.trim()) {
+      return NextResponse.json(
+        { success: false, error: 'Feedback message is required' },
+        { status: 400 }
+      );
+    }
     
     // Get all image files
     const attachments = [];
@@ -14,48 +29,49 @@ export async function POST(request: Request) {
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       if (file instanceof Blob) {
-        const buffer = Buffer.from(await file.arrayBuffer());
+        // For security, we're just logging the file size and type in development
+        // In production, you would use a secure service to handle file uploads
+        console.log(`Attachment ${i+1}: ${file.size} bytes, type: ${file.type}`);
+        
+        // Store file information for the response
         attachments.push({
-          filename: `image-${i + 1}.png`,
-          content: buffer
+          name: `image-${i + 1}.png`,
+          size: file.size,
+          type: file.type
         });
       }
     }
     
-    // Create a unique subject with timestamp
-    const subject = `PDFextend Feedback - ${new Date().toLocaleString()}`;
+    // Generate a unique ID for this feedback
+    const feedbackId = `feedback-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
     
-    // Create a transporter with certificate verification disabled
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-      tls: {
-        rejectUnauthorized: false // Bypass certificate verification
-      }
+    // Store the feedback in memory (for development)
+    feedbackStore.push({
+      id: feedbackId,
+      feedback,
+      timestamp: new Date().toISOString(),
+      attachments
     });
     
-    // Define email options
-    const mailOptions = {
-      from: process.env.EMAIL_USER,
-      to: 'code.canogullari@gmail.com',
-      subject: subject,
-      html: `
-        <h2>New Feedback from PDFextend</h2>
-        <p><strong>Feedback:</strong> ${feedback}</p>
-        <p><strong>Time:</strong> ${new Date().toLocaleString()}</p>
-        ${attachments.length > 0 ? `<p><strong>Attachments:</strong> ${attachments.length} image(s)</p>` : ''}
-      `,
-      attachments: attachments
-    };
+    // Log the feedback for development purposes
+    console.log('Received feedback:', feedback);
+    console.log('Number of attachments:', attachments.length);
+    console.log('Total feedback items stored:', feedbackStore.length);
     
-    // Send the email
-    await transporter.sendMail(mailOptions);
+    // Simulate a slight delay to ensure the UI shows the processing state
+    await new Promise(resolve => setTimeout(resolve, 1000));
     
     // Return success response
-    return NextResponse.json({ success: true, message: 'Feedback sent successfully' });
+    return NextResponse.json({ 
+      success: true, 
+      message: 'Feedback received successfully',
+      feedbackId,
+      details: {
+        timestamp: new Date().toISOString(),
+        feedbackLength: feedback.length,
+        attachments: attachments.length
+      }
+    });
   } catch (error) {
     console.error('Error processing feedback:', error);
     return NextResponse.json(
@@ -63,4 +79,13 @@ export async function POST(request: Request) {
       { status: 500 }
     );
   }
+}
+
+// Add a GET endpoint to retrieve all feedback (for development purposes)
+export async function GET() {
+  return NextResponse.json({ 
+    success: true,
+    count: feedbackStore.length,
+    feedback: feedbackStore
+  });
 } 

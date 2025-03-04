@@ -28,191 +28,211 @@ const FeedbackForm = ({
 }: FeedbackFormProps) => {
   const feedbackImageRef = useRef<HTMLInputElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
+  const hiddenFormRef = useRef<HTMLFormElement>(null);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
   const [currentUrl, setCurrentUrl] = useState('');
-  const [isFirstSubmission, setIsFirstSubmission] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [processingTime, setProcessingTime] = useState(3);
+  const [showProcessing, setShowProcessing] = useState(false);
+  const [submissionStatus, setSubmissionStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState('');
   
   // Set current URL on client side
   useEffect(() => {
     setCurrentUrl(window.location.href);
   }, []);
   
-  // Add event listener to handle form submission
+  // Reset state when feedbackSubmitted changes to false (new form)
   useEffect(() => {
-    const form = formRef.current;
-    if (!form) return;
-    
-    const handleSubmit = async (e: Event) => {
-      e.preventDefault();
+    if (!feedbackSubmitted) {
+      setIsSubmitting(false);
+      setShowProcessing(false);
+      setSubmissionStatus('idle');
+      setErrorMessage('');
+    }
+  }, [feedbackSubmitted]);
+  
+  // Countdown timer for processing state
+  useEffect(() => {
+    if (showProcessing && processingTime > 0) {
+      const timer = setTimeout(() => {
+        setProcessingTime(prev => prev - 1);
+      }, 1000);
       
-      if (!feedback.trim()) {
-        alert('Please enter some feedback before submitting.');
-        return;
-      }
-      
-      // Call the submitFeedback function which will handle UI updates
+      return () => clearTimeout(timer);
+    } else if (showProcessing && processingTime === 0 && submissionStatus === 'success') {
+      setShowProcessing(false);
+      // Call the submitFeedback function to update UI
       submitFeedback();
-      
-      try {
-        // For first-time submissions, show a note about activation
-        if (isFirstSubmission) {
-          console.log('First submission - check your email for activation link from FormSubmit');
-          setIsFirstSubmission(false);
-        }
-        
-        // If we have images, we need to use the standard form submission
-        // as the AJAX endpoint doesn't properly handle file attachments
-        if (feedbackImages.length > 0) {
-          // Create a hidden form for submission
-          const hiddenForm = document.createElement('form');
-          hiddenForm.method = 'POST';
-          hiddenForm.action = 'https://formsubmit.co/code.canogullari@gmail.com';
-          hiddenForm.enctype = 'multipart/form-data';
-          hiddenForm.style.display = 'none';
-          hiddenForm.target = 'hidden_iframe';
-          
-          // Add the message
-          const messageInput = document.createElement('input');
-          messageInput.type = 'text';
-          messageInput.name = 'message';
-          messageInput.value = feedback;
-          hiddenForm.appendChild(messageInput);
-          
-          // Add the subject
-          const subjectInput = document.createElement('input');
-          subjectInput.type = 'hidden';
-          subjectInput.name = '_subject';
-          subjectInput.value = `PDFextend Feedback - ${new Date().toLocaleString()}`;
-          hiddenForm.appendChild(subjectInput);
-          
-          // Add the honeypot
-          const honeypotInput = document.createElement('input');
-          honeypotInput.type = 'text';
-          honeypotInput.name = '_honey';
-          honeypotInput.style.display = 'none';
-          hiddenForm.appendChild(honeypotInput);
-          
-          // Add the template
-          const templateInput = document.createElement('input');
-          templateInput.type = 'hidden';
-          templateInput.name = '_template';
-          templateInput.value = 'table';
-          hiddenForm.appendChild(templateInput);
-          
-          // Add autoresponse setting to prevent redirect
-          const autoResponseInput = document.createElement('input');
-          autoResponseInput.type = 'hidden';
-          autoResponseInput.name = '_autoresponse';
-          autoResponseInput.value = 'Your feedback has been received. Thank you!';
-          hiddenForm.appendChild(autoResponseInput);
-          
-          // Disable CAPTCHA
-          const captchaInput = document.createElement('input');
-          captchaInput.type = 'hidden';
-          captchaInput.name = '_captcha';
-          captchaInput.value = 'false';
-          hiddenForm.appendChild(captchaInput);
-          
-          // Add _next parameter to stay on the same page
-          const nextInput = document.createElement('input');
-          nextInput.type = 'hidden';
-          nextInput.name = '_next';
-          nextInput.value = window.location.href;
-          hiddenForm.appendChild(nextInput);
-          
-          // Create hidden iframe to target the form submission
-          let iframe = document.getElementById('hidden_iframe') as HTMLIFrameElement;
-          if (!iframe) {
-            iframe = document.createElement('iframe');
-            iframe.name = 'hidden_iframe';
-            iframe.id = 'hidden_iframe';
-            iframe.style.display = 'none';
-            document.body.appendChild(iframe);
-          }
-          
-          // Add images - use a different approach for multiple files
-          if (feedbackImages.length === 1) {
-            // For a single image, use the standard approach
-            const fileInput = document.createElement('input');
-            fileInput.type = 'file';
-            fileInput.name = 'attachment';
-            
-            // Create a DataTransfer object to set files
-            const dataTransfer = new DataTransfer();
-            dataTransfer.items.add(feedbackImages[0]);
-            fileInput.files = dataTransfer.files;
-            
-            hiddenForm.appendChild(fileInput);
-          } else {
-            // For multiple images, use indexed names
-            feedbackImages.forEach((image, index) => {
-              const fileInput = document.createElement('input');
-              fileInput.type = 'file';
-              fileInput.name = `attachment${index + 1}`; // Use unique names for each attachment
-              
-              // Create a DataTransfer object to set files
-              const dataTransfer = new DataTransfer();
-              dataTransfer.items.add(image);
-              fileInput.files = dataTransfer.files;
-              
-              hiddenForm.appendChild(fileInput);
-            });
-            
-            // Add a count of attachments
-            const countInput = document.createElement('input');
-            countInput.type = 'hidden';
-            countInput.name = 'attachment_count';
-            countInput.value = feedbackImages.length.toString();
-            hiddenForm.appendChild(countInput);
-          }
-          
-          // Add the form to the document, submit it, and remove it
-          document.body.appendChild(hiddenForm);
-          hiddenForm.submit();
-          
-          // Set a timeout to remove the form after submission
-          setTimeout(() => {
-            document.body.removeChild(hiddenForm);
-          }, 1000);
-          
-          console.log(`Feedback with ${feedbackImages.length} images submitted successfully!`);
-        } else {
-          // For submissions without images, use the AJAX endpoint
-          const formData = new FormData();
-          formData.append('message', feedback);
-          formData.append('_subject', `PDFextend Feedback - ${new Date().toLocaleString()}`);
-          formData.append('_captcha', 'false');
-          
-          // Send to FormSubmit via fetch to prevent page redirect
-          const response = await fetch('https://formsubmit.co/ajax/code.canogullari@gmail.com', {
-            method: 'POST',
-            body: formData,
-            headers: {
-              'Accept': 'application/json'
-            }
-          });
-          
-          const result = await response.json();
-          
-          if (result.success === 'true' || result.success === true) {
-            console.log('Feedback submitted successfully!');
-          } else {
-            throw new Error('Failed to submit feedback');
-          }
-        }
-      } catch (error) {
-        console.error('Error submitting feedback:', error);
+    } else if (showProcessing && processingTime === 0 && submissionStatus === 'error') {
+      setShowProcessing(false);
+      setIsSubmitting(false);
+    }
+  }, [showProcessing, processingTime, submitFeedback, submissionStatus]);
+  
+  // Create a hidden iframe for form submission
+  useEffect(() => {
+    // Create iframe if it doesn't exist
+    if (!document.getElementById('hidden_feedback_iframe')) {
+      const iframe = document.createElement('iframe');
+      iframe.id = 'hidden_feedback_iframe';
+      iframe.name = 'hidden_feedback_iframe';
+      iframe.style.display = 'none';
+      document.body.appendChild(iframe);
+    }
+    
+    // Cleanup on unmount
+    return () => {
+      const iframe = document.getElementById('hidden_feedback_iframe');
+      if (iframe) {
+        document.body.removeChild(iframe);
       }
     };
+  }, []);
+  
+  // Handle form submission
+  const handleFormSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     
-    form.addEventListener('submit', handleSubmit);
+    if (!feedback.trim()) {
+      alert('Please enter some feedback before submitting.');
+      return;
+    }
     
-    return () => {
-      form.removeEventListener('submit', handleSubmit);
-    };
-  }, [feedback, feedbackImages, submitFeedback, isFirstSubmission]);
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+    setSubmissionStatus('sending');
+    setShowProcessing(true);
+    setErrorMessage('');
+    
+    // Set the processing time based on the number of images (more images = longer wait)
+    const baseTime = 3; // Base time in seconds
+    const additionalTimePerImage = 1; // Additional time per image in seconds
+    const totalProcessingTime = baseTime + (feedbackImages.length * additionalTimePerImage);
+    setProcessingTime(totalProcessingTime);
+    
+    try {
+      // First, log the feedback to our API for storage
+      const apiFormData = new FormData();
+      apiFormData.append('feedback', feedback);
+      feedbackImages.forEach((file) => {
+        apiFormData.append('attachment', file);
+      });
+      
+      // Send to our API
+      const apiResponse = await fetch('/api/feedback', {
+        method: 'POST',
+        body: apiFormData,
+      });
+      
+      const apiResult = await apiResponse.json();
+      
+      if (!apiResult.success) {
+        throw new Error('Failed to store feedback');
+      }
+      
+      // Now, submit to FormSubmit.co using a hidden form
+      if (!hiddenFormRef.current) {
+        throw new Error('Form reference not available');
+      }
+      
+      // Clear any existing inputs
+      while (hiddenFormRef.current.firstChild) {
+        hiddenFormRef.current.removeChild(hiddenFormRef.current.firstChild);
+      }
+      
+      // Set form attributes
+      hiddenFormRef.current.action = 'https://formsubmit.co/code.canogullari@gmail.com';
+      hiddenFormRef.current.method = 'POST';
+      hiddenFormRef.current.enctype = 'multipart/form-data';
+      hiddenFormRef.current.target = 'hidden_feedback_iframe';
+      
+      // Add message field
+      const messageInput = document.createElement('input');
+      messageInput.type = 'hidden';
+      messageInput.name = 'message';
+      messageInput.value = feedback;
+      hiddenFormRef.current.appendChild(messageInput);
+      
+      // Add subject field
+      const subjectInput = document.createElement('input');
+      subjectInput.type = 'hidden';
+      subjectInput.name = '_subject';
+      subjectInput.value = `PDFextend Feedback - ${new Date().toLocaleString()}`;
+      hiddenFormRef.current.appendChild(subjectInput);
+      
+      // Disable captcha
+      const captchaInput = document.createElement('input');
+      captchaInput.type = 'hidden';
+      captchaInput.name = '_captcha';
+      captchaInput.value = 'false';
+      hiddenFormRef.current.appendChild(captchaInput);
+      
+      // Use table template
+      const templateInput = document.createElement('input');
+      templateInput.type = 'hidden';
+      templateInput.name = '_template';
+      templateInput.value = 'table';
+      hiddenFormRef.current.appendChild(templateInput);
+      
+      // Add all images
+      feedbackImages.forEach((file, index) => {
+        const fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.name = `attachment${index + 1}`;
+        fileInput.style.display = 'none';
+        
+        // Create a DataTransfer to set the file
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+        fileInput.files = dataTransfer.files;
+        
+        hiddenFormRef.current.appendChild(fileInput);
+      });
+      
+      // Submit the form
+      hiddenFormRef.current.submit();
+      
+      // Set success status
+      setSubmissionStatus('success');
+      
+      console.log('Feedback submitted successfully!');
+      
+      // If the submission completes before the countdown, we'll still wait
+      // for the countdown to finish before showing success
+      if (processingTime <= 0) {
+        setShowProcessing(false);
+        submitFeedback();
+      }
+    } catch (error) {
+      console.error('Error submitting feedback:', error);
+      setSubmissionStatus('error');
+      setErrorMessage(error instanceof Error ? error.message : 'There was an error submitting your feedback. Please try again.');
+      
+      // If the countdown is already finished, hide the processing screen
+      if (processingTime <= 0) {
+        setShowProcessing(false);
+        setIsSubmitting(false);
+      }
+    }
+  };
+
+  // Reset the form and error state
+  const handleRetry = () => {
+    setSubmissionStatus('idle');
+    setErrorMessage('');
+    setIsSubmitting(false);
+    setShowProcessing(false);
+  };
 
   return (
     <div style={{ width: '100%', marginBottom: 0 }}>
+      {/* Hidden form for FormSubmit.co submission */}
+      <form 
+        ref={hiddenFormRef}
+        style={{ display: 'none' }}
+      ></form>
+      
       <div style={{
         width: '100%',
         minHeight: feedbackSubmitted ? '500px' : (feedbackSectionNeedsExtraHeight ? '500px' : '400px'),
@@ -247,10 +267,31 @@ const FeedbackForm = ({
             justifyContent: 'center',
             textAlign: 'center'
           }}>
-            {!feedbackSubmitted ? (
+            {!feedbackSubmitted && !showProcessing ? (
               <>
                 <FaComment style={{ color: '#4a6741' }} />
                 Tell Us What You Think
+              </>
+            ) : showProcessing ? (
+              <>
+                <div style={{ width: '24px', height: '24px', position: 'relative' }}>
+                  <div style={{
+                    position: 'absolute',
+                    width: '100%',
+                    height: '100%',
+                    borderRadius: '50%',
+                    border: '3px solid rgba(74, 103, 65, 0.3)',
+                    borderTop: '3px solid #4a6741',
+                    animation: 'spin 1s linear infinite'
+                  }} />
+                  <style jsx>{`
+                    @keyframes spin {
+                      0% { transform: rotate(0deg); }
+                      100% { transform: rotate(360deg); }
+                    }
+                  `}</style>
+                </div>
+                Processing Your Feedback
               </>
             ) : (
               <>
@@ -272,8 +313,10 @@ const FeedbackForm = ({
             lineHeight: '1.4',
             width: '100%'
           }}>
-            {!feedbackSubmitted ? 
+            {!feedbackSubmitted && !showProcessing ? 
               "Please share your feedback and include screenshots of any issues you encounter." :
+              showProcessing ?
+              "Please wait while we process your feedback. This ensures all your data is properly sent." :
               "We appreciate you taking the time to help us improve PDFextend."
             }
           </p>
@@ -285,9 +328,9 @@ const FeedbackForm = ({
             flexDirection: 'column',
             gap: '15px',
             position: 'relative',
-            height: feedbackSubmitted ? '300px' : 'auto'
+            height: feedbackSubmitted || showProcessing ? '300px' : 'auto'
           }}>
-            {!feedbackSubmitted ? (
+            {!feedbackSubmitted && !showProcessing ? (
               <form 
                 ref={formRef}
                 style={{
@@ -296,17 +339,8 @@ const FeedbackForm = ({
                   flexDirection: 'column',
                   gap: '15px'
                 }}
-                action="https://formsubmit.co/code.canogullari@gmail.com"
-                method="POST"
-                encType="multipart/form-data"
-                target="hidden_iframe"
+                onSubmit={handleFormSubmit}
               >
-                <input type="hidden" name="_captcha" value="false" />
-                <input type="hidden" name="_template" value="table" />
-                <input type="hidden" name="_subject" value={`PDFextend Feedback - ${new Date().toLocaleString()}`} />
-                <input type="hidden" name="_next" value={currentUrl} />
-                <input type="text" name="_honey" style={{ display: 'none' }} />
-                
                 <textarea
                   name="message"
                   value={feedback}
@@ -407,10 +441,10 @@ const FeedbackForm = ({
                     </div>
                   </div>
                   
+                  {/* Hidden file input for UI interaction */}
                   <input
                     ref={feedbackImageRef}
                     type="file"
-                    name="attachment"
                     accept="image/*"
                     onChange={handleFeedbackImageUpload}
                     multiple
@@ -483,17 +517,29 @@ const FeedbackForm = ({
                       ))}
                     </div>
                   )}
+                  
+                  {feedbackImages.length > 0 && (
+                    <p style={{
+                      fontSize: '12px',
+                      color: '#e67e22',
+                      margin: '10px 0 0 0',
+                      fontStyle: 'italic'
+                    }}>
+                      Note: Your feedback will be sent to our team via email. Thank you for helping us improve!
+                    </p>
+                  )}
                 </div>
                 
                 <button
                   type="submit"
+                  disabled={isSubmitting}
                   style={{
                     padding: '10px 16px',
-                    backgroundColor: '#4a6741',
+                    backgroundColor: isSubmitting ? '#8ba980' : '#4a6741',
                     color: 'white',
                     border: 'none',
                     borderRadius: '6px',
-                    cursor: 'pointer',
+                    cursor: isSubmitting ? 'default' : 'pointer',
                     fontSize: '14px',
                     fontWeight: '600',
                     display: 'flex',
@@ -507,10 +553,132 @@ const FeedbackForm = ({
                     margin: '0 auto'
                   }}
                 >
-                  <FaPaperPlane size={12} />
-                  Submit Feedback
+                  {isSubmitting ? (
+                    <>Sending...</>
+                  ) : (
+                    <>
+                      <FaPaperPlane size={12} />
+                      Submit Feedback
+                    </>
+                  )}
                 </button>
               </form>
+            ) : showProcessing ? (
+              <div style={{ 
+                padding: '25px 30px',
+                backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                border: submissionStatus === 'error' ? '1px solid #f8d7da' : '1px solid #c3e6cb',
+                borderRadius: '8px',
+                color: submissionStatus === 'error' ? '#721c24' : '#155724',
+                fontSize: '16px',
+                textAlign: 'center',
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+                width: '100%',
+                maxWidth: '350px',
+                margin: '0 auto',
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                zIndex: 5,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '15px'
+              }}>
+                <div style={{
+                  width: '50px',
+                  height: '50px',
+                  borderRadius: '50%',
+                  backgroundColor: submissionStatus === 'error' ? '#e74c3c' : '#4a6741',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginBottom: '5px',
+                  position: 'relative'
+                }}>
+                  {submissionStatus === 'error' ? (
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-1-7v2h2v-2h-2zm0-8v6h2V7h-2z" 
+                        fill="white"/>
+                    </svg>
+                  ) : (
+                    <div style={{
+                      position: 'absolute',
+                      width: '100%',
+                      height: '100%',
+                      borderRadius: '50%',
+                      border: '3px solid rgba(255, 255, 255, 0.3)',
+                      borderTop: '3px solid white',
+                      animation: 'spin 1s linear infinite'
+                    }} />
+                  )}
+                </div>
+                <div>
+                  <h3 style={{ 
+                    margin: '0 0 5px 0', 
+                    color: '#2c3e50', 
+                    fontSize: '18px', 
+                    fontWeight: '600',
+                    textAlign: 'center'
+                  }}>
+                    {submissionStatus === 'error' 
+                      ? 'Error' 
+                      : submissionStatus === 'sending' 
+                        ? 'Sending Feedback...' 
+                        : 'Processing...'}
+                  </h3>
+                  <p style={{ 
+                    margin: '0 0 10px 0', 
+                    color: '#34495e', 
+                    fontSize: '14px',
+                    textAlign: 'center'
+                  }}>
+                    {submissionStatus === 'error'
+                      ? errorMessage || 'There was an error submitting your feedback.'
+                      : submissionStatus === 'sending' 
+                        ? 'Your feedback is being sent to our team.' 
+                        : 'Please wait while we process your feedback.'}
+                  </p>
+                  {submissionStatus !== 'error' && (
+                    <p style={{
+                      margin: '0',
+                      color: '#4a6741',
+                      fontSize: '14px',
+                      fontWeight: '600'
+                    }}>
+                      {processingTime} seconds remaining
+                    </p>
+                  )}
+                  {submissionStatus === 'error' ? (
+                    <button
+                      onClick={handleRetry}
+                      style={{
+                        marginTop: '15px',
+                        padding: '8px 16px',
+                        backgroundColor: '#4a6741',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        fontSize: '14px',
+                        fontWeight: '600'
+                      }}
+                    >
+                      Try Again
+                    </button>
+                  ) : (
+                    <p style={{
+                      margin: '10px 0 0 0',
+                      color: '#e74c3c',
+                      fontSize: '12px',
+                      fontWeight: '600'
+                    }}>
+                      Please wait until the process completes.
+                    </p>
+                  )}
+                </div>
+              </div>
             ) : (
               <div style={{ 
                 padding: '25px 30px',
@@ -577,4 +745,4 @@ const FeedbackForm = ({
   );
 };
 
-export default FeedbackForm; 
+export default FeedbackForm;
