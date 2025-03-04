@@ -1,6 +1,19 @@
 import type { Metadata } from "next";
 import { inter, roboto } from "./fonts";
 import "./globals.css";
+// Import Fontsource CSS files
+import '@fontsource/inter/100.css';
+import '@fontsource/inter/200.css';
+import '@fontsource/inter/300.css';
+import '@fontsource/inter/400.css';
+import '@fontsource/inter/500.css';
+import '@fontsource/inter/600.css';
+import '@fontsource/inter/700.css';
+import '@fontsource/inter/800.css';
+import '@fontsource/inter/900.css';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
 import Navigation from "./components/Navigation";
 import { GoogleAnalytics } from '@next/third-parties/google'
 import { GA_MEASUREMENT_ID } from './utils/analytics';
@@ -15,11 +28,11 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // Use inter font with roboto as fallback
-  const fontClass = inter.className;
+  // Combine font variables
+  const fontVariables = `${inter.variable} ${roboto.variable}`;
   
   return (
-    <html lang="en">
+    <html lang="en" className={fontVariables}>
       <head>
         <style dangerouslySetInnerHTML={{ __html: `
           /* Ensure bottom section is always visible */
@@ -44,21 +57,30 @@ export default function RootLayout({
           }
         `}} />
         <script dangerouslySetInnerHTML={{ __html: `
+          // Font loading detection
+          document.documentElement.classList.add('font-loading');
+          
+          // Mark fonts as loaded after a short delay
+          setTimeout(function() {
+            document.documentElement.classList.remove('font-loading');
+            document.documentElement.classList.add('fonts-loaded');
+          }, 100);
+          
           // Font loading fallback
           (function() {
             try {
               document.fonts.ready.then(function() {
-                if (!document.fonts.check('1em Inter')) {
-                  document.documentElement.classList.add('font-fallback');
-                }
+                document.documentElement.classList.remove('font-loading');
+                document.documentElement.classList.add('fonts-loaded');
               });
             } catch (e) {
-              document.documentElement.classList.add('font-fallback');
+              // If document.fonts is not supported, we already have the timeout above
+              console.warn('Font loading API not supported');
             }
           })();
         `}} />
       </head>
-      <body className={fontClass} suppressHydrationWarning>
+      <body suppressHydrationWarning>
         <Navigation />
         <div className="bottom-section-placeholder"></div>
         {children}
