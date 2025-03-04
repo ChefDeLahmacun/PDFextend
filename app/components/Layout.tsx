@@ -106,7 +106,7 @@ const Layout = ({ children, feedbackSectionNeedsExtraHeight, feedbackSubmitted =
           left: 0,
           width: '100%',
           height: featuresHeight,
-          backgroundColor: '#b5b2ae',
+          backgroundColor: '#dae1f0',
           zIndex: 0
         }}></div>
         
@@ -117,7 +117,7 @@ const Layout = ({ children, feedbackSectionNeedsExtraHeight, feedbackSubmitted =
           left: 0,
           width: '100%',
           height: greenSectionHeight,
-          backgroundColor: '#c7edd4',
+          backgroundColor: '#c7edd4', /* Original green color for the preview section */
           zIndex: 0
         }}></div>
         
@@ -172,4 +172,4 @@ const Layout = ({ children, feedbackSectionNeedsExtraHeight, feedbackSubmitted =
   );
 };
 
-export default Layout; 
+export default Layout;

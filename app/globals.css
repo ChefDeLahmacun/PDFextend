@@ -5,7 +5,7 @@
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-rgb: 242, 196, 170;  /* #f2c4aa - matching the side columns */
-  --green-section-color: #c7edd4; /* Default green color, will be overridden by JS */
+  --green-section-color: #c7edd4; /* Original green color for the preview section */
 }
 
 html, body {
@@ -31,15 +31,28 @@ body::after {
   top: 370px; /* Default position for the green section */
   left: 0;
   width: 100%;
-  height: 100vh;
-  background-color: var(--green-section-color);
+  height: 950px; /* Limit height to only cover the preview section */
+  background-color: var(--green-section-color); /* This will be the green color for the preview section */
   z-index: -1;
   pointer-events: none;
   transition: background-color 0.3s ease; /* Add transition for smooth color changes */
 }
 
+/* Add another pseudo-element for the bottom section with the side column color */
+body::before {
+  content: '';
+  position: absolute;
+  top: 1320px; /* Position after the green section */
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background-color: #f2c4aa; /* Match the side columns */
+  z-index: -2;
+  pointer-events: none;
+}
+
 /* Green background class to ensure immediate color application */
-.green-background {
+.bottom-background {
   background-color: var(--green-section-color) !important;
   transition: top 0.3s ease, background-color 0.3s ease; /* Add transition for color changes */
 }

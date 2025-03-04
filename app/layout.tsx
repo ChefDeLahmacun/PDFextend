@@ -20,14 +20,14 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <style dangerouslySetInnerHTML={{ __html: `
-          /* Ensure green section is always visible */
-          .green-section-placeholder {
+          /* Ensure bottom section is always visible */
+          .bottom-section-placeholder {
             position: absolute;
             top: 370px; /* Default position - will be covered by actual content */
             left: 0;
             width: 100%;
             height: 950px; /* Match minGreenSectionHeight */
-            background-color: #c7edd4;
+            background-color: #c7edd4; /* Original green color for the preview section */
             z-index: 0;
           }
           
@@ -56,7 +56,7 @@ export default function RootLayout({
       </head>
       <body className={fontClass} suppressHydrationWarning>
         <Navigation />
-        <div className="green-section-placeholder"></div>
+        <div className="bottom-section-placeholder"></div>
         {children}
       </body>
     </html>
