@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { inter, roboto } from "./fonts";
 import "./globals.css";
 import Navigation from "./components/Navigation";
+import { GoogleAnalytics } from '@next/third-parties/google'
+import { GA_MEASUREMENT_ID } from './utils/analytics';
 
 export const metadata: Metadata = {
   title: "PDF Note Space Extender",
@@ -60,6 +62,7 @@ export default function RootLayout({
         <Navigation />
         <div className="bottom-section-placeholder"></div>
         {children}
+        <GoogleAnalytics gaId={GA_MEASUREMENT_ID} />
       </body>
     </html>
   );

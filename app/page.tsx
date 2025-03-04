@@ -11,8 +11,10 @@ import Preview from './components/Preview';
 import FeedbackForm from './components/FeedbackForm';
 import WhiteBox from './components/WhiteBox';
 import DonationsBox from './components/DonationsBox';
+import { useAnalytics } from './utils/useAnalytics';
 
 export default function Home() {
+  const { trackEvent } = useAnalytics();
   const [file, setFile] = useState<File | null>(null);
   const [noteSpaceWidth, setNoteSpaceWidth] = useState(400);
   const [outputFileName, setOutputFileName] = useState('');
@@ -74,6 +76,12 @@ export default function Home() {
     // Check if file size exceeds 50MB
     if (uploadedFile.size > 50 * 1024 * 1024) {
       alert('File size exceeds 50MB limit. Please choose a smaller file.');
+      // Track file size error
+      trackEvent(
+        'file_upload_error',
+        'PDF Processing',
+        'File size exceeds limit',
+      );
       return;
     }
     
@@ -83,6 +91,14 @@ export default function Home() {
     updateOutputFileName(uploadedFile.name.replace('.pdf', ''), includeWithNotes);
     setPdfPreviewUrl('');
     setSuccessMessage('');
+    
+    // Track successful file upload
+    trackEvent(
+      'file_upload',
+      'PDF Processing',
+      'File uploaded successfully',
+      Math.round(uploadedFile.size / 1024) // Size in KB as value
+    );
   };
 
   const clearFile = () => {
@@ -305,6 +321,13 @@ export default function Home() {
     
     try {
       setDownloadIsProcessing(true);
+      
+      // Track download start
+      trackEvent(
+        'download_start',
+        'PDF Processing',
+        'Started PDF download process'
+      );
 
       // Read the file
       const fileBuffer = await file.arrayBuffer();
@@ -451,6 +474,13 @@ export default function Home() {
     } catch (error) {
       console.error('Error processing PDF:', error);
       alert('Error processing PDF. Please try again with a different file.');
+      
+      // Track download error
+      trackEvent(
+        'download_error',
+        'PDF Processing',
+        'Error processing PDF',
+      );
     } finally {
       setDownloadIsProcessing(false);
     }
@@ -462,7 +492,8 @@ export default function Home() {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = outputFileName || file!.name.replace('.pdf', '_with_notes.pdf');
+    const filename = outputFileName || file!.name.replace('.pdf', '_with_notes.pdf');
+    link.download = filename;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -471,6 +502,14 @@ export default function Home() {
     // After processing, show success message
     setIsProcessing(false);
     setSuccessMessage('PDF downloaded successfully!');
+    
+    // Track successful download
+    trackEvent(
+      'download_complete',
+      'PDF Processing',
+      'PDF downloaded successfully',
+      Math.round(pdfBytes.length / 1024) // Size in KB as value
+    );
     
     // Reset the success message after 5 seconds
     setTimeout(() => {
@@ -567,6 +606,14 @@ export default function Home() {
     
     // The form submission is now handled by the event listener in FeedbackForm
     // We just need to handle the UI updates here
+    
+    // Track feedback submission
+    trackEvent(
+      'feedback_submitted',
+      'User Feedback',
+      'Feedback submitted',
+      feedbackImages.length // Number of images attached as value
+    );
     
     // Clear form and show success message
     setFeedback('');
